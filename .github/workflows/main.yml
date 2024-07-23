@@ -1,0 +1,19 @@
+name: Main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  licenses:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check out the sources
+      uses: actions/checkout@v4
+    - name: REUSE license check
+      uses: fsfe/reuse-action@v4
