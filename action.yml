@@ -1,0 +1,45 @@
+name: 'IntelliJ Updater'
+description: 'Update IntelliJ-based IDE versions in the order specified by the configuration file.'
+branding:
+  icon: refresh-cw
+  color: green
+inputs:
+  config-file:
+    description: 'Configuration file'
+    required: true
+    default: './intellij-updater.json'
+outputs:
+  has-changes:
+    description: 'Whether the IntelliJ updater has something to update.'
+    value: ${{ steps.update.outputs.has-changes }}
+  branch-name:
+    description: 'The branch name that should be used for the generated pull request. Only available if `has-changes` is `true`.'
+    value: ${{ steps.update.outputs.branch-name }}
+  author-name:
+    description: 'The `author name <email>` for the generated pull request. Only available if `has-changes` is `true`.'
+    value: ${{ steps.update.outputs.author-name }}
+  commit-message:
+    description: 'The commit message for the generated commit. Only available if `has-changes` is `true`.'
+    value: ${{ steps.update.outputs.commit-message }}
+  pr-title:
+    description: 'The title of the generated pull request. Only available if `has-changes` is `true`.'
+    value: ${{ steps.update.outputs.pr-title }}
+  pr-body-path:
+    description: 'The path to the file containing the PR message in Markdown. Only available if `has-changes` is `true`.'
+    value: ${{ steps.update.outputs.pr-body-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - id: update
+      name: 'Update the dependency versions'
+      shell: pwsh
+      run: dotnet fsi $env:SCRIPT_PATH $env:CONFIG_FILE
+      env:
+        SCRIPT_FILE: ${{ github.action_path }}/scripts/Update-IdeVersion.fsi
+        CONFIG_FILE: ${{ inputs.config-file }}
