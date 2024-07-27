@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-﻿open System
+open System
 open System.Diagnostics
 open System.IO
 open System.Net.Http
@@ -320,9 +320,27 @@ let ideVersionSpec = Map.ofArray [|
     "riderSdkPreview", (snapshotMetadataUrl, atLeastEap)
 |]
 
-let main() = task {
-    let! latestSpec = ReadLatestIdeSpecs ideVersionSpec "riderSdk" "riderSdkPreview"
-    let! currentSpec = ReadCurrentIdeSpecs ideVersionSpec.Keys
+type Config = {
+    Updates: Update[]
+}
+and Update = {
+    File: string
+    Field: string
+    Kind: UpdateKind
+    VersionFlavor: IdeFlavor
+    VersionConstraint: IdeVersion option
+}
+and UpdateKind =
+    | Ide of string
+    | Kotlin
+
+let readConfig path =
+    failwith "TODO"
+
+let main configPath = task {
+    let! config = readConfig configPath
+    let! latestSpec = ReadLatestIdeSpecs config
+    let! currentSpec = ReadCurrentIdeSpecs config
     if latestSpec <> currentSpec then
         printfn "Changes detected."
         printfn $"Local spec: {currentSpec}."
@@ -352,11 +370,17 @@ pr-body-path={prBodyMarkdownPath}
     printfn $"Result printed to \"{out}\"."
 }
 
+type Args = {
+    ConfigPath: string
+    OutputPath: string
+}
+
+let readArgs = function
+| [| _; config; output |] -> { ConfigPath = config; OutputPath = output }
+| _ -> failwith "Arguments expected: <config-file-path> <output-file-path>"
+
 async {
-    let gitHubOutputPath =
-        Environment.GetEnvironmentVariable "GITHUB_OUTPUT"
-        |> Option.ofObj
-        |> Option.defaultValue "output.txt" // for tests
-    let! result = Async.AwaitTask <| main()
-    do! Async.AwaitTask <| writeOutput result gitHubOutputPath
+    let args = readArgs fsi.CommandLineArgs
+    let! result = Async.AwaitTask <| main args.ConfigPath
+    do! Async.AwaitTask <| writeOutput result args.OutputPath
 } |> Async.RunSynchronously
