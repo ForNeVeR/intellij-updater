@@ -6,6 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="Versioning.fs" />
+        <Compile Include="Configuration.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

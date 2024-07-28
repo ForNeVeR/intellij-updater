@@ -10,6 +10,7 @@ open System.Text.RegularExpressions
 open System.Threading.Tasks
 open System.Xml.Linq
 open System.Xml.XPath
+open IntelliJUpdater.Versioning
 
 let snapshotMetadataUrl =
     Uri "https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/rider/riderRD/maven-metadata.xml"
@@ -24,77 +25,6 @@ type TaskResult =
             PrBodyMarkdown: string
         |}
     | NoChanges
-
-type IdeWave =
-    | YearBased of year: int * number: int // 2024.1
-type IdeFlavor =
-    | Snapshot
-    | EAP of int * dev: bool
-    | RC of int
-    | Stable
-
-    static member Parse(x: string) =
-        if x.StartsWith "EAP" && x.EndsWith "D" then EAP(int(x.Substring(3, x.Length - 4)), true)
-        else if x.StartsWith "EAP" then EAP(int(x.Substring 3), false)
-        else if x.StartsWith "RC" then RC(int(x.Substring 2))
-        else if x = "" then Stable
-        else failwithf $"Cannot parse IDE flavor: {x}."
-
-type IdeVersion = // TODO[#358]: Verify ordering
-    {
-        Wave: IdeWave
-        Minor: int
-        Flavor: IdeFlavor
-        IsSnapshot: bool
-    }
-
-    static member Parse(description: string) =
-        let components = description.Split '-'
-
-        let parseComponents (yearBased: string) flavor isSnapshot =
-            let yearBasedComponents = yearBased.Split '.'
-            let year, number, minor =
-                match yearBasedComponents with
-                | [| year; number |] -> int year, int number, 0
-                | [| year; number; minor |] -> int year, int number, int minor
-                | _ -> failwithf $"Cannot parse year-based version \"{yearBased}\"."
-            let flavor =
-                match IdeFlavor.Parse flavor, isSnapshot with
-                | Stable, true -> Snapshot
-                | flavor, _ -> flavor
-            {
-                Wave = YearBased(year, number)
-                Minor = minor
-                Flavor = flavor
-                IsSnapshot = isSnapshot
-            }
-
-        match components with
-        | [| yearBased |] -> parseComponents yearBased "" false
-        | [| yearBased; "SNAPSHOT" |] -> parseComponents yearBased "" true
-        | [| yearBased; flavor; "SNAPSHOT" |] -> parseComponents yearBased flavor true
-        | _ -> failwithf $"Cannot parse IDE version \"{description}\"."
-
-    override this.ToString() =
-        String.concat "" [|
-            let (YearBased(year, number)) = this.Wave
-            string year
-            "."
-            string number
-            if this.Minor <> 0 then
-                "."
-                string this.Minor
-
-            match this.Flavor with
-            | Snapshot -> ""
-            | EAP(n, dev) ->
-                let d = if dev then "D" else ""
-                $"-EAP{string n}{d}"
-            | RC n -> $"-RC{n}"
-            | Stable -> ""
-
-            if this.IsSnapshot then "-SNAPSHOT"
-        |]
 
 type IdeBuildSpec = {
     IdeVersions: Map<string, IdeVersion>
@@ -117,7 +47,10 @@ let GetUntilVersion ide =
     let waveNumber = ((string year) |> Seq.skip 2 |> Seq.toArray |> String) + (string number)
     $"{waveNumber}.*"
 
-let ReadLatestIdeSpecs specs kotlinKey untilKey = task {
+let ReadLatestIdeSpecs config = task {
+    let specs = failwithf "TODO"
+    let kotlinKey = failwithf "TODO"
+    let untilKey = failwithf "TODO"
     use http = new HttpClient()
     let readVersions (url: Uri) filter = task {
         printfn $"Loading document \"{url}\"."
@@ -320,24 +253,10 @@ let ideVersionSpec = Map.ofArray [|
     "riderSdkPreview", (snapshotMetadataUrl, atLeastEap)
 |]
 
-type Config = {
-    Updates: Update[]
-}
-and Update = {
-    File: string
-    Field: string
-    Kind: UpdateKind
-    VersionFlavor: IdeFlavor
-    VersionConstraint: IdeVersion option
-}
-and UpdateKind =
-    | Ide of string
-    | Kotlin
-
 let readConfig path =
     failwith "TODO"
 
-let main configPath = task {
+let processData configPath = task {
     let! config = readConfig configPath
     let! latestSpec = ReadLatestIdeSpecs config
     let! currentSpec = ReadCurrentIdeSpecs config
@@ -379,8 +298,9 @@ let readArgs = function
 | [| _; config; output |] -> { ConfigPath = config; OutputPath = output }
 | _ -> failwith "Arguments expected: <config-file-path> <output-file-path>"
 
-async {
-    let args = readArgs fsi.CommandLineArgs
-    let! result = Async.AwaitTask <| main args.ConfigPath
-    do! Async.AwaitTask <| writeOutput result args.OutputPath
-} |> Async.RunSynchronously
+let main args =
+    async {
+        let args = readArgs args
+        let! result = Async.AwaitTask <| processData args.ConfigPath
+        do! Async.AwaitTask <| writeOutput result args.OutputPath
+    } |> Async.RunSynchronously
