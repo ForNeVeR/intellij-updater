@@ -40,6 +40,17 @@ runs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: 'Dump environment'
+      shell: pwsh
+      run: |
+        Write-Output "Will run intellij-updater in directory `"$(Resolve-Path .)`"."
+        Write-Output "Configuration file: `"$env:CONFIG_FILE`"."
+        Write-Output 'Contents of the context directory:'
+        Get-ChildItem .
+      working-directory: ${{ github.action_path }}
+      env:
+        CONFIG_FILE: ${{ inputs.config-file }}
+
     - id: update
       name: 'Update the dependency versions'
       shell: pwsh
