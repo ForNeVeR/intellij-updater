@@ -12,6 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliJUpdater.Tests", "IntelliJUpdater.Tests\IntelliJUpdater.Tests.fsproj", "{014ECC9F-EC27-4D23-9790-460F40A388DC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{998FC2DC-3DEA-41DD-9330-C4102547D6ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{AAD2F83F-36C4-4549-ABDB-800375C0D96D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +36,8 @@ Global
 		{014ECC9F-EC27-4D23-9790-460F40A388DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{014ECC9F-EC27-4D23-9790-460F40A388DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{014ECC9F-EC27-4D23-9790-460F40A388DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AAD2F83F-36C4-4549-ABDB-800375C0D96D} = {998FC2DC-3DEA-41DD-9330-C4102547D6ED}
 	EndGlobalSection
 EndGlobal
