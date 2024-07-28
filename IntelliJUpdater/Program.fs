@@ -298,9 +298,11 @@ let readArgs = function
 | [| _; config; output |] -> { ConfigPath = config; OutputPath = output }
 | _ -> failwith "Arguments expected: <config-file-path> <output-file-path>"
 
-let main args =
+[<EntryPoint>]
+let main (args: string[]): int =
     async {
         let args = readArgs args
         let! result = Async.AwaitTask <| processData args.ConfigPath
         do! Async.AwaitTask <| writeOutput result args.OutputPath
     } |> Async.RunSynchronously
+    0
