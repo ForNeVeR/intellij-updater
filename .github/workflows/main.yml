@@ -65,13 +65,13 @@ jobs:
           PR_TITLE: ${{ steps.test.outputs.pr-title }}
           PR_BODY_PATH: ${{ steps.test.outputs.pr-body-path }}
         run: |
-          scripts/New-TestResultFile.ps1
-            -HasChanges $env:HAS_CHANGES
-            -BranchName $env:BRANCH_NAME
-            -AuthorName $env:AUTHOR_NAME
-            -CommitMessage $env:COMMIT_MESSAGE
-            -PrTitle $env:PR_TITLE
-            -PrBodyPath $env:PR_BODY_PATH
+          scripts/New-TestResultFile.ps1 `
+            -HasChanges $env:HAS_CHANGES `
+            -BranchName $env:BRANCH_NAME `
+            -AuthorName $env:AUTHOR_NAME `
+            -CommitMessage $env:COMMIT_MESSAGE `
+            -PrTitle $env:PR_TITLE `
+            -PrBodyPath $env:PR_BODY_PATH `
             -OutFile test-data/test-result.txt
       - name: Assert test results
         shell: pwsh
