@@ -39,7 +39,7 @@ runs:
     - id: update
       name: 'Update the dependency versions'
       shell: pwsh
-      run: dotnet fsi $env:SCRIPT_PATH $env:CONFIG_FILE
+      run: dotnet run -- $env:CONFIG_FILE
+      working-directory: ${{ github.action_path }}
       env:
-        SCRIPT_FILE: ${{ github.action_path }}/scripts/Update-IdeVersion.fsi
         CONFIG_FILE: ${{ inputs.config-file }}

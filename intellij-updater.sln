@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F831EDFC-C8C8-4D1D-8A5B-2E4FEA1A1C20}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		action.yml = action.yml
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliJUpdater.Tests", "IntelliJUpdater.Tests\IntelliJUpdater.Tests.fsproj", "{014ECC9F-EC27-4D23-9790-460F40A388DC}"
@@ -18,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testData", "testData", "{D1A65F8B-AC5B-46FA-B7B7-5FD150A8B2FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
