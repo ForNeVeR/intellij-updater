@@ -22,6 +22,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-data", "test-data", "{A37DEF7E-4D5E-4C7F-9FBD-955EAE0CD130}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{F819DECB-8F23-47F5-900F-2075FA0614C3}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\Test-Encoding.ps1 = scripts\Test-Encoding.ps1
+		scripts\New-TestResultFile.ps1 = scripts\New-TestResultFile.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
