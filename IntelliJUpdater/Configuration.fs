@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-﻿namespace IntelliJUpdater
+namespace IntelliJUpdater
 
 open System.IO
 open System.Text.Json

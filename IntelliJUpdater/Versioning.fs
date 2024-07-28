@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-﻿module IntelliJUpdater.Versioning
+module IntelliJUpdater.Versioning
 
 type IdeWave =
     | YearBased of year: int * number: int // 2024.1
