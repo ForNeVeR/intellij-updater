@@ -41,6 +41,42 @@ jobs:
         run: dotnet test
         timeout-minutes: 10
 
+  integration-test:
+    runs-on: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ macos-14, ubuntu-22.04, windows-2022 ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - id: test
+        name: Perform integration test
+        uses: ./
+        with:
+          config-file: test-data/test-config.json
+      - name: Dump test results
+        shell: pwsh
+        env:
+          HAS_CHANGES: ${{ steps.test.outputs.has-changes }}
+          BRANCH_NAME: ${{ steps.test.outputs.branch-name }}
+          AUTHOR_NAME: ${{ steps.test.outputs.author-name }}
+          COMMIT_MESSAGE: ${{ steps.test.outputs.commit-message }}
+          PR_TITLE: ${{ steps.test.outputs.pr-title }}
+          PR_BODY_PATH: ${{ steps.test.outputs.pr-body-path }}
+        run: |
+          scripts/New-TestResultFile.ps1
+            -HasChanges $env:HAS_CHANGES
+            -BranchName $env:BRANCH_NAME
+            -AuthorName $env:AUTHOR_NAME
+            -CommitMessage $env:COMMIT_MESSAGE
+            -PrTitle $env:PR_TITLE
+            -PrBodyPath $env:PR_BODY_PATH
+            -OutFile test-data/test-result.txt
+      - name: Assert test results
+        shell: pwsh
+        run: scripts/Assert-TestResult.ps1 -ExpectedFile test-data/test-data.gold -ActualFile test-data/test-result.txt
+
   licenses:
     runs-on: ubuntu-22.04
     steps:

@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testData", "testData", "{D1A65F8B-AC5B-46FA-B7B7-5FD150A8B2FD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-data", "test-data", "{A37DEF7E-4D5E-4C7F-9FBD-955EAE0CD130}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
