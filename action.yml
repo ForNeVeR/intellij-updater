@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+#
+# SPDX-License-Identifier: MIT
+
 name: 'IntelliJ Updater'
 description: 'Update IntelliJ-based IDE versions in the order specified by the configuration file.'
 branding:
