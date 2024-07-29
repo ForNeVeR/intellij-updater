@@ -43,17 +43,17 @@ runs:
     - name: 'Dump environment'
       shell: pwsh
       run: |
-        Write-Output "Will run intellij-updater in directory `"$(Resolve-Path .)`"."
+        Write-Output "Will run intellij-updater in directory `"$env:ACTION_PATH`"."
         Write-Output "Configuration file: `"$env:CONFIG_FILE`"."
         Write-Output "Output file: `"$env:GITHUB_OUTPUT`"."
-      working-directory: ${{ github.action_path }}
       env:
+        ACTION_PATH: ${{ github.action_path }}
         CONFIG_FILE: ${{ inputs.config-file }}
 
     - id: update
       name: 'Update the dependency versions'
       shell: pwsh
-      run: dotnet run --project IntelliJUpdater -- $env:CONFIG_FILE $env:GITHUB_OUTPUT
-      working-directory: ${{ github.action_path }}
+      run: dotnet run --project "$env:ACTION_PATH/IntelliJUpdater" -- $env:CONFIG_FILE $env:GITHUB_OUTPUT
       env:
+        ACTION_PATH: ${{ github.action_path }}
         CONFIG_FILE: ${{ inputs.config-file }}
