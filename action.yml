@@ -45,6 +45,7 @@ runs:
       run: |
         Write-Output "Will run intellij-updater in directory `"$(Resolve-Path .)`"."
         Write-Output "Configuration file: `"$env:CONFIG_FILE`"."
+        Write-Output "Output file: `"$env:GITHUB_OUTPUT`"."
       working-directory: ${{ github.action_path }}
       env:
         CONFIG_FILE: ${{ inputs.config-file }}
@@ -52,7 +53,7 @@ runs:
     - id: update
       name: 'Update the dependency versions'
       shell: pwsh
-      run: dotnet run --project IntelliJUpdater -- $env:CONFIG_FILE
+      run: dotnet run --project IntelliJUpdater -- $env:CONFIG_FILE $env:GITHUB_OUTPUT
       working-directory: ${{ github.action_path }}
       env:
         CONFIG_FILE: ${{ inputs.config-file }}
