@@ -295,7 +295,7 @@ type Args = {
 }
 
 let readArgs = function
-| [| _; config; output |] -> { ConfigPath = config; OutputPath = output }
+| [| config; output |] -> { ConfigPath = config; OutputPath = output }
 | _ -> failwith "Arguments expected: <config-file-path> <output-file-path>"
 
 [<EntryPoint>]
