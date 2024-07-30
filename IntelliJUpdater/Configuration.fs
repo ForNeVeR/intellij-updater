@@ -9,6 +9,7 @@ open System.Text.Json
 open System.Text.Json.Serialization
 open System.Threading.Tasks
 open IntelliJUpdater.Versioning
+open TruePath
 
 [<CLIMutable>]
 type JsonConfiguration = {
@@ -29,7 +30,7 @@ type Configuration =
     }
 
     static let mapUpdate(update: JsonUpdate): Update = {
-        File = update.File
+        File = LocalPath update.File
         Field = update.Field
         Kind = UpdateKind.Parse update.Kind
         VersionFlavor = UpdateFlavor.Parse update.VersionFlavor
@@ -49,7 +50,7 @@ type Configuration =
         }
     }
 and Update = {
-    File: string
+    File: LocalPath
     Field: string
     Kind: UpdateKind
     VersionFlavor: UpdateFlavor

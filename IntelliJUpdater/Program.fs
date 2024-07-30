@@ -12,6 +12,7 @@ open System.Xml.Linq
 open System.Xml.XPath
 open IntelliJUpdater
 open IntelliJUpdater.Versioning
+open TruePath
 
 let snapshotMetadataUrl =
     Uri "https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/rider/riderRD/maven-metadata.xml"
@@ -43,12 +44,13 @@ let GetKotlinVersion wave =
     | YearBased(2023, 1) -> Version.Parse "1.8.0"
     | _ -> failwithf $"Cannot determine Kotlin version for IDE wave {wave}."
 
-let GetUntilVersion ide =
-    let (YearBased(year, number)) = ide.Wave
-    let waveNumber = ((string year) |> Seq.skip 2 |> Seq.toArray |> String) + (string number)
-    $"{waveNumber}.*"
+type StoredEntityVersion = {
+    File: LocalPath
+    Field: string
+    Update: EntityVersion
+}
 
-let ReadLatestIdeSpecs config = task {
+let ReadLatestSpecs config: Task<StoredEntityVersion[]> = task {
     let specs = failwithf "TODO"
     let kotlinKey = failwithf "TODO"
     let untilKey = failwithf "TODO"
@@ -95,73 +97,47 @@ let ReadLatestIdeSpecs config = task {
     let ideVersionForKotlin = ideVersions |> Map.find kotlinKey
     let ideVersionForUntilBuild = ideVersions |> Map.find untilKey
 
+    return failwithf "TODO"
+}
+
+let private ReadValue (filePath: LocalPath) (key: string) =
+    match filePath.GetExtensionWithoutDot() with
+    | "toml" -> TomlFile.ReadValue filePath key
+    | "properties" -> PropertiesFile.ReadValue filePath key
+    | other -> failwithf $"Unknown file extension: \"{other}\"."
+
+let private ReadVersion(update: Update): Task<StoredEntityVersion> = task {
+    let! version =
+        match update.Kind, update.Augmentation with
+        | Ide key, None ->
+            task {
+                let! text = ReadValue update.File update.Field
+                let version = IdeVersion.Parse text
+                return EntityVersion.Ide version
+            }
+        | Ide key, Some NextMajor ->
+            task {
+                let! text = ReadValue update.File update.Field
+                let waveNumber = text.Replace(".*", "") |> int
+                return EntityVersion.NextMajor waveNumber
+            }
+        | Kotlin, None ->
+            task {
+                let! text = ReadValue update.File update.Field
+                let version = Version.Parse text
+                return EntityVersion.Kotlin version
+            }
+        | x, y -> failwithf $"Unsupported update kind and augmentation: {x} with {y}."
+
     return {
-        IdeVersions = ideVersions
-        KotlinVersion = GetKotlinVersion ideVersionForKotlin.Wave
-        UntilVersion = GetUntilVersion ideVersionForUntilBuild
+        File = update.File
+        Field = update.Field
+        Update = version
     }
 }
 
-let FindRepoRoot() = Task.FromResult(Environment.CurrentDirectory)
-let ReadIdeVersions tomlFilePath keys = task {
-    let! toml = File.ReadAllTextAsync tomlFilePath
-    return
-        keys
-        |> Seq.map(fun key ->
-            let re = Regex $@"[\r\n]{Regex.Escape key} = ""(.*?)"""
-            let matches = re.Match(toml)
-            if not matches.Success then failwithf $"Cannot find the key {key} in the TOML file \"{tomlFilePath}.\""
-            key, IdeVersion.Parse matches.Groups[1].Value
-        )
-        |> Map.ofSeq
-}
-
-let ReadKotlinVersion filePath = task {
-    let! toml = File.ReadAllTextAsync filePath
-    let re = Regex @"[\r\n]kotlin = ""(.*?)"""
-    let matches = re.Match(toml)
-    if not matches.Success then failwithf $"Cannot parse TOML file \"{filePath}.\""
-    return Version.Parse matches.Groups[1].Value
-}
-
-let ReadUntilBuild propertiesFilePath = task {
-    let! properties = File.ReadAllTextAsync propertiesFilePath
-    let re = Regex @"\r?\nuntilBuildVersion=(.*?)\r?\n"
-    let matches = re.Match(properties)
-    if not matches.Success then failwithf $"Cannot parse properties file \"{propertiesFilePath}.\""
-    return matches.Groups[1].Value
-}
-
-let ReadCurrentIdeSpecs(config: Configuration) = task {
-    let! repoRoot = FindRepoRoot()
-    let! ideVersions = ReadIdeVersions config
-    let! kotlinVersion = ReadKotlinVersion config
-    let! untilBuild = ReadUntilBuild config
-    return {
-        IdeVersions = ideVersions
-        KotlinVersion = kotlinVersion
-        UntilVersion = untilBuild
-    }
-}
-
-let WriteIdeVersions (versions: Map<string, IdeVersion>) tomlFilePath = task {
-    let! toml = File.ReadAllTextAsync tomlFilePath
-    let mutable newContent = toml
-    for key, version in Map.toSeq versions do
-        let re = Regex $@"[\r\n]{Regex.Escape key} = ""(.*?)"""
-        let version = version.ToString()
-        newContent <- re.Replace(newContent, $"\n{key} = \"{version}\"")
-    do! File.WriteAllTextAsync(tomlFilePath, newContent)
-    return toml <> newContent
-}
-
-let WriteKotlinVersion (version: Version) filePath = task {
-    let! toml = File.ReadAllTextAsync filePath
-    let re = Regex @"[\r\n]kotlin = ""(.*?)"""
-    let version = version.ToString()
-    let newContent = re.Replace(toml, $"\nkotlin = \"{version}\"")
-    do! File.WriteAllTextAsync(filePath, newContent)
-    return toml <> newContent
+let ReadCurrentSpecs(config: Configuration) = task {
+    return! config.Updates |> Array.map ReadVersion |> Task.WhenAll
 }
 
 let WriteUntilVersion (version: string) propertiesFilePath = task {
@@ -172,18 +148,26 @@ let WriteUntilVersion (version: string) propertiesFilePath = task {
     return properties <> newContent
 }
 
-let ApplySpec { IdeVersions = ideVersions; KotlinVersion = kotlin; UntilVersion = untilVersion } = task {
-    let! repoRoot = FindRepoRoot()
-    let gradleProperties = Path.Combine(repoRoot, "gradle.properties")
-    let versionsTomlFile = Path.Combine(repoRoot, "gradle/libs.versions.toml")
+let private ApplyVersion (update: StoredEntityVersion): Task<bool> =
+    let versionText =
+        match update.Update with
+        | EntityVersion.Ide version -> version.ToString()
+        | EntityVersion.Kotlin version -> version.ToString()
+        | EntityVersion.NextMajor waveNumber -> $"{waveNumber}.*"
 
-    let! ideVersionsUpdated = WriteIdeVersions ideVersions versionsTomlFile
-    let! kotlinVersionUpdated = WriteKotlinVersion kotlin versionsTomlFile
-    let! untilVersionUpdated = WriteUntilVersion untilVersion gradleProperties
-    if not ideVersionsUpdated && not kotlinVersionUpdated && not untilVersionUpdated then
-        failwithf "Cannot update neither IDE nor Kotlin version in the configuration files."
+    match update.File.GetExtensionWithoutDot() with
+    | "toml" -> TomlFile.WriteValue update.File update.Field versionText
+    | "properties" -> PropertiesFile.WriteValue update.File update.Field versionText
+    | other -> failwithf $"Unknown file extension: \"{other}\"."
+
+let ApplySpec (updates: StoredEntityVersion[]) = task {
+    for version in updates do
+        let! changed = ApplyVersion version
+        if not changed then
+            failwithf $"Cannot apply change to the configuration file: {version}."
 }
-let GenerateResult localSpec remoteSpec =
+
+let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (remoteSpec: StoredEntityVersion[]) =
     let fullVersion v =
         let (YearBased(year, number)) = v.Wave
         String.concat "" [|
@@ -206,9 +190,8 @@ let GenerateResult localSpec remoteSpec =
 
     let message = String.concat "\n" [|
         yield!
-            localSpec.IdeVersions
-            |> Map.toSeq
-            |> Seq.map(fun(key, version) ->
+            localSpec
+            |> Seq.map(fun version ->
                 let localVersion = fullVersion version
                 let remoteVersion =
                     remoteSpec.IdeVersions
@@ -220,19 +203,16 @@ let GenerateResult localSpec remoteSpec =
         $"- untilBuildVersion: {localSpec.UntilVersion} -> {remoteSpec.UntilVersion}"
     |]
 
+    let preSection =
+        config.PrBodyPrefix
+        |> Option.map(fun x -> x + "\n\n")
+
     {|
         BranchName = "dependencies/rider"
         CommitMessage = "Dependencies: update Rider"
         PrTitle = "Rider Update"
         PrBodyMarkdown = $"""
-## Maintainer Note
-> [!WARNING]
-> This PR will not trigger CI by default. Please **close it and reopen manually** to trigger the CI.
->
-> Unfortunately, this is a consequence of the current GitHub Action security model (by default, PRs created
-> automatically aren't allowed to trigger other automation).
-
-## Version updates
+{preSection}## Version Updates
 {message}
 """
     |}
@@ -259,8 +239,8 @@ let readConfig path = task {
 
 let processData configPath = task {
     let! config = readConfig configPath
-    let! latestSpec = ReadLatestIdeSpecs config
-    let! currentSpec = ReadCurrentIdeSpecs config
+    let! latestSpec = ReadLatestSpecs config
+    let! currentSpec = ReadCurrentSpecs config
     if latestSpec <> currentSpec then
         printfn "Changes detected."
         printfn $"Local spec: {currentSpec}."

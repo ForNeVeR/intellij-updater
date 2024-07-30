@@ -4,6 +4,8 @@
 
 module IntelliJUpdater.Versioning
 
+open System
+
 type IdeWave =
     | YearBased of year: int * number: int // 2024.1
 type IdeFlavor =
@@ -74,3 +76,9 @@ type IdeVersion = // TODO[#358]: Verify ordering
 
             if this.IsSnapshot then "-SNAPSHOT"
         |]
+
+[<RequireQualifiedAccess>]
+type EntityVersion =
+    | Ide of IdeVersion
+    | Kotlin of Version
+    | NextMajor of waveNumber: int
