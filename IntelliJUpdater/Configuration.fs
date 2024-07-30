@@ -20,6 +20,7 @@ and [<CLIMutable>] JsonUpdate = {
     Kind: string
     VersionFlavor: string
     VersionConstraint: string option
+    Augmentation: string option
 }
 
 type Configuration =
@@ -33,6 +34,7 @@ type Configuration =
         Kind = UpdateKind.Parse update.Kind
         VersionFlavor = UpdateFlavor.Parse update.VersionFlavor
         VersionConstraint = update.VersionConstraint |> Option.map IdeVersionConstraint.Parse
+        Augmentation = update.Augmentation |> Option.map Augmentation.Parse
     }
 
     static let jsonOptions = JsonSerializerOptions(
@@ -52,6 +54,7 @@ and Update = {
     Kind: UpdateKind
     VersionFlavor: UpdateFlavor
     VersionConstraint: IdeVersionConstraint option
+    Augmentation: Augmentation option
 }
 and UpdateKind =
     | Ide of string
@@ -80,3 +83,10 @@ and IdeVersionConstraint =
             LessOrEqualTo(IdeVersion.Parse (x.Substring 2))
         else
             failwithf $"""Cannot parse VersionConstraint: "{x}"."""
+and Augmentation =
+    | NextMajor
+
+    static member Parse(x: string): Augmentation =
+        match x with
+        | "nextMajor" -> NextMajor
+        | o -> failwithf $"""Cannot parse augmentation value "{o}"."""

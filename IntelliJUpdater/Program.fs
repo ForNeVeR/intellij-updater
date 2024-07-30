@@ -10,6 +10,7 @@ open System.Text.RegularExpressions
 open System.Threading.Tasks
 open System.Xml.Linq
 open System.Xml.XPath
+open IntelliJUpdater
 open IntelliJUpdater.Versioning
 
 let snapshotMetadataUrl =
@@ -131,13 +132,11 @@ let ReadUntilBuild propertiesFilePath = task {
     return matches.Groups[1].Value
 }
 
-let ReadCurrentIdeSpecs(ideVersionKeys: string seq) = task {
+let ReadCurrentIdeSpecs(config: Configuration) = task {
     let! repoRoot = FindRepoRoot()
-    let gradleProperties = Path.Combine(repoRoot, "gradle.properties")
-    let versionsTomlFile = Path.Combine(repoRoot, "gradle/libs.versions.toml")
-    let! ideVersions = ReadIdeVersions versionsTomlFile ideVersionKeys
-    let! kotlinVersion = ReadKotlinVersion versionsTomlFile
-    let! untilBuild = ReadUntilBuild gradleProperties
+    let! ideVersions = ReadIdeVersions config
+    let! kotlinVersion = ReadKotlinVersion config
+    let! untilBuild = ReadUntilBuild config
     return {
         IdeVersions = ideVersions
         KotlinVersion = kotlinVersion
@@ -253,8 +252,10 @@ let ideVersionSpec = Map.ofArray [|
     "riderSdkPreview", (snapshotMetadataUrl, atLeastEap)
 |]
 
-let readConfig path =
-    failwith "TODO"
+let readConfig path = task {
+    use stream = File.OpenRead path
+    return! Configuration.Read stream
+}
 
 let processData configPath = task {
     let! config = readConfig configPath
