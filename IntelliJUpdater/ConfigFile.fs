@@ -1,4 +1,4 @@
-﻿namespace IntelliJUpdater
+namespace IntelliJUpdater
 
 open System.IO
 open System.Text.RegularExpressions
