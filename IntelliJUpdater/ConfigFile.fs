@@ -28,7 +28,6 @@ module TomlFile =
         return toml <> newContent
     }
 
-
 module PropertiesFile =
     let ReadValue (propertiesFile: LocalPath) (key: string) = task {
         let! properties = File.ReadAllTextAsync propertiesFile.Value

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 open System
+open System.Collections.Generic
 open System.Diagnostics
 open System.IO
 open System.Net.Http
@@ -168,6 +169,16 @@ let ApplySpec (updates: StoredEntityVersion[]) = task {
 }
 
 let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (remoteSpec: StoredEntityVersion[]) =
+    let toMap specs =
+        specs
+        |> Seq.map(fun x -> KeyValuePair((x.File, x.Field), x))
+        |> Dictionary
+
+    let localMap = toMap localSpec
+    let remoteMap = toMap remoteSpec
+
+    let diff = localMap |> Seq.filter(fun kvp -> kvp.Value.Update <> remoteMap[kvp.Key].Update)
+
     let fullVersion v =
         let (YearBased(year, number)) = v.Wave
         String.concat "" [|
@@ -188,19 +199,20 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
             | Stable -> ()
         |]
 
+    let toString item =
+        match item.Update with
+        | EntityVersion.Ide version -> fullVersion version
+        | EntityVersion.Kotlin version -> version.ToString()
+        | EntityVersion.NextMajor waveNumber -> $"{waveNumber}.*"
+
     let message = String.concat "\n" [|
-        yield!
-            localSpec
-            |> Seq.map(fun version ->
-                let localVersion = fullVersion version
-                let remoteVersion =
-                    remoteSpec.IdeVersions
-                    |> Map.find key
-                    |> fullVersion
-                $"- {key}: {localVersion} -> {remoteVersion}"
-            )
-        $"- Kotlin: {localSpec.KotlinVersion} -> {remoteSpec.KotlinVersion}"
-        $"- untilBuildVersion: {localSpec.UntilVersion} -> {remoteSpec.UntilVersion}"
+        for item in diff do
+            let key = item.Key
+            let old = localMap[key]
+            let updated = remoteMap[key]
+
+            let file, field = key
+            $"- {file}:{field}: {toString old} -> {toString updated}"
     |]
 
     let preSection =

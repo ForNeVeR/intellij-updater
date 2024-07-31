@@ -14,6 +14,7 @@ open TruePath
 [<CLIMutable>]
 type JsonConfiguration = {
     Updates: JsonUpdate[]
+    PrBodyPrefix: string option
 }
 and [<CLIMutable>] JsonUpdate = {
     File: string
@@ -27,6 +28,7 @@ and [<CLIMutable>] JsonUpdate = {
 type Configuration =
     {
         Updates: Update[]
+        PrBodyPrefix: string option
     }
 
     static let mapUpdate(update: JsonUpdate): Update = {
@@ -47,6 +49,7 @@ type Configuration =
         let! config = JsonSerializer.DeserializeAsync<JsonConfiguration>(input, jsonOptions)
         return {
             Updates = config.Updates |> Array.map mapUpdate
+            PrBodyPrefix = config.PrBodyPrefix
         }
     }
 and Update = {
