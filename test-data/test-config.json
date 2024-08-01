@@ -1,0 +1,16 @@
+﻿{
+    "updates": [{
+        "file": "testData/config.toml",
+        "field": "riderSdkVersion",
+        "kind": "rider",
+        "versionFlavor": "release",
+        "versionConstraint": "<=2024.1.4"
+    }, {
+        "file": "testData/config.properties",
+        "field": "untilBuildVersion",
+        "kind": "rider",
+        "versionFlavor": "release",
+        "versionConstraint": "<=2024.1.4",
+        "augmentation": "nextMajor"
+    }]
+}

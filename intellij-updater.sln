@@ -21,6 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-data", "test-data", "{A37DEF7E-4D5E-4C7F-9FBD-955EAE0CD130}"
+	ProjectSection(SolutionItems) = preProject
+		test-data\test-config.json = test-data\test-config.json
+		test-data\config.toml = test-data\config.toml
+		test-data\config.properties = test-data\config.properties
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{F819DECB-8F23-47F5-900F-2075FA0614C3}"
 	ProjectSection(SolutionItems) = preProject
