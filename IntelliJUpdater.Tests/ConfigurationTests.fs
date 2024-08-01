@@ -9,13 +9,14 @@ open IntelliJUpdater.Versioning
 open System.IO
 open System.Text
 open System.Threading.Tasks
+open TruePath
 open Xunit
 
 [<Fact>]
 let ``Config is read correctly``(): Task =
     let content = """
 {
-    "versions": [{
+    "updates": [{
         "file": "testData/config.toml",
         "field": "riderSdkVersion",
         "kind": "rider",
@@ -28,13 +29,15 @@ let ``Config is read correctly``(): Task =
         "versionFlavor": "release",
         "versionConstraint": "<=2024.1.4",
         "augmentation": "nextMajor"
-    }]
+    }],
+    "prBodyPrefix": "test"
 }
 """
     let expectedConfig = {
+        PrBodyPrefix = Some "test"
         Updates = [|
             {
-                File = "testData/config.toml"
+                File = LocalPath "testData/config.toml"
                 Field = "riderSdkVersion"
                 Kind = Ide "rider"
                 VersionFlavor = Release
@@ -42,7 +45,7 @@ let ``Config is read correctly``(): Task =
                 Augmentation = None
             }
             {
-                File = "testData/config.properties"
+                File = LocalPath "testData/config.properties"
                 Field = "untilBuildVersion"
                 Kind = Ide "rider"
                 VersionFlavor = Release
