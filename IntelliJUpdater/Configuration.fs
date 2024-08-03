@@ -61,13 +61,28 @@ and Update = {
     Augmentation: Augmentation option
 }
 and UpdateKind =
-    | Ide of string
+    | Ide of IdeKind
     | Kotlin
 
     static member Parse(x: string): UpdateKind =
         match x.ToLowerInvariant() with
         | "kotlin" -> Kotlin
-        | other -> Ide other
+        | other -> Ide(IdeKind.Parse other)
+and [<RequireQualifiedAccess>] IdeKind =
+    | Rider
+    | IntelliJIdeaCommunity
+
+    static let mapping = Map.ofArray [|
+        "rider", Rider
+        "intellij-idea-community", IntelliJIdeaCommunity
+    |]
+
+    static member Parse(x: string) =
+        match Map.tryFind (x.ToLowerInvariant()) mapping with
+        | Some ide -> ide
+        | None ->
+            let keys = String.concat ", " mapping.Keys
+            failwithf $"Cannot parse IDE kind {x}. Supported keys: {keys}."
 and UpdateFlavor =
     | Release
     | EAP

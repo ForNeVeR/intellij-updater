@@ -39,7 +39,7 @@ let ``Config is read correctly``(): Task =
             {
                 File = LocalPath "testData/config.toml"
                 Field = "riderSdkVersion"
-                Kind = Ide "rider"
+                Kind = Ide IdeKind.Rider
                 VersionFlavor = Release
                 VersionConstraint = Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4"))
                 Augmentation = None
@@ -47,7 +47,7 @@ let ``Config is read correctly``(): Task =
             {
                 File = LocalPath "testData/config.properties"
                 Field = "untilBuildVersion"
-                Kind = Ide "rider"
+                Kind = Ide IdeKind.Rider
                 VersionFlavor = Release
                 VersionConstraint = Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4"))
                 Augmentation = Some NextMajor

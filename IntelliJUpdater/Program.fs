@@ -4,13 +4,9 @@
 
 open System
 open System.Collections.Generic
-open System.Diagnostics
 open System.IO
-open System.Net.Http
 open System.Text.RegularExpressions
 open System.Threading.Tasks
-open System.Xml.Linq
-open System.Xml.XPath
 open IntelliJUpdater
 open IntelliJUpdater.Versioning
 open TruePath
@@ -35,71 +31,44 @@ type IdeBuildSpec = {
     UntilVersion: string
 }
 
-// https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-let GetKotlinVersion wave =
-    match wave with
-    | YearBased(2024, 2) -> Version.Parse "1.9.24"
-    | YearBased(2024, 1) -> Version.Parse "1.9.22"
-    | YearBased(2023, 3) -> Version.Parse "1.9.21"
-    | YearBased(2023, 2) -> Version.Parse "1.8.20"
-    | YearBased(2023, 1) -> Version.Parse "1.8.0"
-    | _ -> failwithf $"Cannot determine Kotlin version for IDE wave {wave}."
-
 type StoredEntityVersion = {
     File: LocalPath
     Field: string
     Update: EntityVersion
 }
 
-let ReadLatestSpecs config: Task<StoredEntityVersion[]> = task {
-    let specs = failwithf "TODO"
-    let kotlinKey = failwithf "TODO"
-    let untilKey = failwithf "TODO"
-    use http = new HttpClient()
-    let readVersions (url: Uri) filter = task {
-        printfn $"Loading document \"{url}\"."
-        let sw = Stopwatch.StartNew()
-
-        let! response = http.GetAsync(url)
-        response.EnsureSuccessStatusCode() |> ignore
-
-        let! content = response.Content.ReadAsStringAsync()
-        let document = XDocument.Parse content
-        printfn $"Loaded and processed the document in {sw.ElapsedMilliseconds} ms."
-
-        let versions =
-            document.XPathSelectElements "//metadata//versioning//versions//version"
-            |> Seq.toArray
-        if versions.Length = 0 then failwithf "No Rider SDK versions found."
-        let maxVersion =
-            versions
-            |> Seq.map(fun version ->
-                let version = version.Value
-                printfn $"Version found: {version}"
-                version
-            )
-            |> Seq.map IdeVersion.Parse
-            |> Seq.filter filter
-            |> Seq.max
-
-        return maxVersion
+let private ReadLatestSpec(update: Update): Task<EntityVersion> =
+    match update.Kind with
+    | Ide ide ->
+        task {
+            let! ideVersion = Ide.ReadLatestVersion ide update.VersionFlavor update.VersionConstraint
+            return EntityVersion.Ide ideVersion
+        }
+    | Kotlin -> task {
+        let! ideVersion = Ide.ReadLatestVersion IdeKind.IntelliJIdeaCommunity update.VersionFlavor update.VersionConstraint
+        let kotlinVersion = Kotlin.ForIde ideVersion.Wave
+        return EntityVersion.Kotlin kotlinVersion
     }
 
-    let! pairs =
-        specs
-        |> Map.toSeq
-        |> Seq.map(fun(id, (url, filter)) -> task {
-            let! versions = readVersions url filter
-            return id, versions
-        })
-        |> Task.WhenAll
+let private Augment (augmentation: Augmentation option) (entityVersion: EntityVersion) =
+    match entityVersion, augmentation with
+    | EntityVersion.Ide version, Some NextMajor ->
+        let (YearBased(year, _)) = version.Wave
+        EntityVersion.NextMajor year
+    | _, None -> entityVersion
+    | _ -> failwithf $"Unsupported entity version and augmentation: {entityVersion} with {augmentation}."
 
-    let ideVersions = Map.ofArray pairs
-    let ideVersionForKotlin = ideVersions |> Map.find kotlinKey
-    let ideVersionForUntilBuild = ideVersions |> Map.find untilKey
-
-    return failwithf "TODO"
-}
+let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> =
+    config.Updates
+    |> Seq.map(fun update -> task {
+        let! entityVersion = ReadLatestSpec update
+        return {
+            File = update.File
+            Field = update.Field
+            Update = entityVersion |> Augment update.Augmentation
+        }
+    })
+    |> Task.WhenAll
 
 let private ReadValue (filePath: LocalPath) (key: string) =
     match filePath.GetExtensionWithoutDot() with
