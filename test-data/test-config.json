@@ -1,4 +1,4 @@
-﻿{
+{
     "updates": [{
         "file": "testData/config.toml",
         "field": "riderSdkVersion",
