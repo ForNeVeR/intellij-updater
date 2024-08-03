@@ -11,11 +11,6 @@ open IntelliJUpdater
 open IntelliJUpdater.Versioning
 open TruePath
 
-let snapshotMetadataUrl =
-    Uri "https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/rider/riderRD/maven-metadata.xml"
-let releaseMetadataUrl =
-    Uri "https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/rider/riderRD/maven-metadata.xml"
-
 type TaskResult =
     | HasChanges of {|
             BranchName: string
@@ -155,9 +150,9 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
             "."
             string number
 
-            if v.Minor <> 0 then
+            if v.Patch <> 0 then
                 "."
-                string v.Minor
+                string v.Patch
 
             match v.Flavor with
             | Snapshot -> ()
@@ -197,21 +192,6 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
 {message}
 """
     |}
-
-let isStable version =
-    version.Flavor = Stable
-
-let atLeastEap version =
-    match version.Flavor with
-    | Snapshot -> false
-    | EAP _ -> true
-    | RC _ -> true
-    | Stable -> true
-
-let ideVersionSpec = Map.ofArray [|
-    "riderSdk", (releaseMetadataUrl, isStable)
-    "riderSdkPreview", (snapshotMetadataUrl, atLeastEap)
-|]
 
 let readConfig path = task {
     use stream = File.OpenRead path

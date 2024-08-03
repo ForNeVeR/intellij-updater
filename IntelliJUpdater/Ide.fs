@@ -12,55 +12,77 @@ open System.Xml.Linq
 open System.Xml.XPath
 open IntelliJUpdater.Versioning
 
+let private GetIdeKey = function
+    | IdeKind.Rider -> "rider/riderRD"
+    | IdeKind.IntelliJIdeaCommunity -> "idea/ideaIC"
+
+let private SnapshotMetadataUrl ideKey =
+    Uri $"https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/{ideKey}/maven-metadata.xml"
+let private ReleaseMetadataUrl ideKey =
+    Uri $"https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/{ideKey}/maven-metadata.xml"
+
+let private GetUri ideKey = function
+    | Release -> ReleaseMetadataUrl ideKey
+    | Nightly | UpdateFlavor.EAP -> SnapshotMetadataUrl ideKey
+
+let private CreateFlavorFilter = function
+    | Release -> fun version ->
+        match version.Flavor with
+        | Snapshot -> false
+        | EAP _ -> true
+        | RC _ -> true
+        | Stable -> true
+    | UpdateFlavor.EAP -> fun version ->
+        match version.Flavor with
+        | Snapshot -> false
+        | EAP _ -> true
+        | RC _ -> true
+        | Stable -> true
+    | Nightly -> fun _ -> true
+
+let private CreateConstraintFilter = function
+    | None -> fun _ -> true
+    | Some (LessOrEqualTo other) -> fun version -> version <= other
+
+let private ReadVersions(url: Uri) = task {
+    printfn $"Loading document \"{url}\"."
+    let sw = Stopwatch.StartNew()
+
+    use http = new HttpClient()
+    let! response = http.GetAsync(url)
+    response.EnsureSuccessStatusCode() |> ignore
+
+    let! content = response.Content.ReadAsStringAsync()
+    let document = XDocument.Parse content
+    printfn $"Loaded and processed the document in {sw.ElapsedMilliseconds} ms."
+
+    let versions =
+        document.XPathSelectElements "//metadata//versioning//versions//version"
+        |> Seq.map(fun version ->
+            let version = version.Value
+            printfn $"Version found: {version}"
+            version
+        )
+        |> Seq.map IdeVersion.Parse
+        |> Seq.toArray
+    return versions
+}
+
 let ReadLatestVersion (kind: IdeKind)
                       (flavor: UpdateFlavor)
                       (constr: IdeVersionConstraint option) : Task<IdeVersion> = task {
+    let key = GetIdeKey kind
+    let uri = GetUri key flavor
+    let fFilter = CreateFlavorFilter flavor
+    let cFilter = CreateConstraintFilter constr
+    let! allVersions = ReadVersions uri
+    if allVersions.Length = 0 then failwithf $"No SDK versions found for {kind}."
 
-    let specs = failwithf "TODO"
-    let kotlinKey = failwithf "TODO"
-    let untilKey = failwithf "TODO"
-    use http = new HttpClient()
-    let readVersions (url: Uri) filter = task {
-        printfn $"Loading document \"{url}\"."
-        let sw = Stopwatch.StartNew()
+    let maxVersion =
+        allVersions
+        |> Seq.filter fFilter
+        |> Seq.filter cFilter
+        |> Seq.max
 
-        let! response = http.GetAsync(url)
-        response.EnsureSuccessStatusCode() |> ignore
-
-        let! content = response.Content.ReadAsStringAsync()
-        let document = XDocument.Parse content
-        printfn $"Loaded and processed the document in {sw.ElapsedMilliseconds} ms."
-
-        let versions =
-            document.XPathSelectElements "//metadata//versioning//versions//version"
-            |> Seq.toArray
-        if versions.Length = 0 then failwithf "No Rider SDK versions found."
-        let maxVersion =
-            versions
-            |> Seq.map(fun version ->
-                let version = version.Value
-                printfn $"Version found: {version}"
-                version
-            )
-            |> Seq.map IdeVersion.Parse
-            |> Seq.filter filter
-            |> Seq.max
-
-        return maxVersion
-    }
-
-    let! pairs =
-        specs
-        |> Map.toSeq
-        |> Seq.map(fun(id, (url, filter)) -> task {
-            let! versions = readVersions url filter
-            return id, versions
-        })
-        |> Task.WhenAll
-
-    let ideVersions = Map.ofArray pairs
-    let ideVersionForKotlin = ideVersions |> Map.find kotlinKey
-    let ideVersionForUntilBuild = ideVersions |> Map.find untilKey
-
-    return failwithf "TODO"
+    return maxVersion
 }

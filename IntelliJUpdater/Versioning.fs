@@ -7,6 +7,8 @@ module IntelliJUpdater.Versioning
 open System
 
 type IdeWave =
+    | Legacy of major: int * minor: int // e.g. 14.0
+    | YearBasedVersion of major: int * version: int // e.g. 231.8109
     | YearBased of year: int * number: int // 2024.1
 type IdeFlavor =
     | Snapshot
@@ -24,7 +26,7 @@ type IdeFlavor =
 type IdeVersion = // TODO[#358]: Verify ordering
     {
         Wave: IdeWave
-        Minor: int
+        Patch: int
         Flavor: IdeFlavor
         IsSnapshot: bool
     }
@@ -32,39 +34,49 @@ type IdeVersion = // TODO[#358]: Verify ordering
     static member Parse(description: string) =
         let components = description.Split '-'
 
-        let parseComponents (yearBased: string) flavor isSnapshot =
-            let yearBasedComponents = yearBased.Split '.'
-            let year, number, minor =
-                match yearBasedComponents with
-                | [| year; number |] -> int year, int number, 0
-                | [| year; number; minor |] -> int year, int number, int minor
-                | _ -> failwithf $"Cannot parse year-based version \"{yearBased}\"."
+        let parseComponents (wave: string) flavor isSnapshot =
+            let waveComponents = wave.Split '.'
+            let major, minor, patch =
+                match waveComponents with
+                | [| major |] when int major < 100 -> int major, 0, 0
+                | [| major; minor |] -> int major, int minor, 0
+                | [| major; minor; patch |] -> int major, int minor, int patch
+                | _ -> failwithf $"Cannot parse year-based version \"{wave}\"."
+            let wave =
+                match major with
+                | _ when major < 100 -> Legacy(major, minor)
+                | _ when major < 1000 -> YearBasedVersion(major, minor)
+                | _ -> YearBased(major, minor)
+
             let flavor =
                 match IdeFlavor.Parse flavor, isSnapshot with
                 | Stable, true -> Snapshot
                 | flavor, _ -> flavor
             {
-                Wave = YearBased(year, number)
-                Minor = minor
+                Wave = wave
+                Patch = patch
                 Flavor = flavor
                 IsSnapshot = isSnapshot
             }
 
         match components with
-        | [| yearBased |] -> parseComponents yearBased "" false
-        | [| yearBased; "SNAPSHOT" |] -> parseComponents yearBased "" true
-        | [| yearBased; flavor; "SNAPSHOT" |] -> parseComponents yearBased flavor true
+        | [| wave |] -> parseComponents wave "" false
+        | [| wave; "SNAPSHOT" |] -> parseComponents wave "" true
+        | [| wave; flavor; "SNAPSHOT" |] -> parseComponents wave flavor true
         | _ -> failwithf $"Cannot parse IDE version \"{description}\"."
 
     override this.ToString() =
         String.concat "" [|
-            let (YearBased(year, number)) = this.Wave
-            string year
-            "."
-            string number
-            if this.Minor <> 0 then
+            let components =
+                match this.Wave with
+                // NOTE: Legacy waves might not round-trip, e.g. "14" will be converted into "14.0". We don't care.
+                | Legacy(major, minor) -> [| major; minor |]
+                | YearBasedVersion(major, version) -> [| major; version |]
+                | YearBased(year, number) -> [| year; number |]
+            components |> Seq.map string |> String.concat "."
+            if this.Patch <> 0 then
                 "."
-                string this.Minor
+                string this.Patch
 
             match this.Flavor with
             | Snapshot -> ""
