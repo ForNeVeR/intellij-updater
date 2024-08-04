@@ -23,6 +23,8 @@ function CompareFiles($expected, $actual) {
     if ($diff) {
         Write-Output "Files $expected and $actual are different. Expected:"
         Write-Output $expectedContent
+        Write-Output "Actual:"
+        Write-Output $actualContent
 
         throw "Differences detected."
     }
