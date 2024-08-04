@@ -14,10 +14,14 @@ param (
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+function Normalize($string) {
+    $string.Trim().ReplaceLineEndings("`n").Replace('\', '/')
+}
+
 function CompareFiles($expected, $actual) {
     Write-Output "Comparing files $expected and $actual"
-    $expectedContent = (Get-Content -LiteralPath $expected -Raw).Trim().ReplaceLineEndings("`n")
-    $actualContent = (Get-Content -LiteralPath $actual -Raw).Trim().ReplaceLineEndings("`n")
+    $expectedContent = Normalize (Get-Content -LiteralPath $expected -Raw)
+    $actualContent = Normalize (Get-Content -LiteralPath $actual -Raw)
 
     if ($expectedContent -ne $actualContent) {
         Write-Output "Files $expected and $actual are different. Expected:"
