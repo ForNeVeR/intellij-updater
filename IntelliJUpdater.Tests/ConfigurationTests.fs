@@ -56,6 +56,6 @@ let ``Config is read correctly``(): Task =
     }
     task {
         use stream = new MemoryStream(Encoding.UTF8.GetBytes(content))
-        let! config = Configuration.Read stream
+        let! config = Configuration.Read(LocalPath "testData", stream)
         Assert.Equal(expectedConfig, config)
     }

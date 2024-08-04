@@ -31,8 +31,8 @@ type Configuration =
         PrBodyPrefix: string option
     }
 
-    static let mapUpdate(update: JsonUpdate): Update = {
-        File = LocalPath update.File
+    static let mapUpdate (basePath: LocalPath) (update: JsonUpdate): Update = {
+        File = basePath / update.File
         Field = update.Field
         Kind = UpdateKind.Parse update.Kind
         VersionFlavor = UpdateFlavor.Parse update.VersionFlavor
@@ -45,10 +45,15 @@ type Configuration =
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
     )
 
-    static member Read(input: Stream): Task<Configuration> = task {
+    static member Read(location: LocalPath) = task {
+        use stream = new FileStream(location.Value, FileMode.Open, FileAccess.Read)
+        return! Configuration.Read(location, stream)
+    }
+
+    static member Read(basePath: LocalPath, input: Stream): Task<Configuration> = task {
         let! config = JsonSerializer.DeserializeAsync<JsonConfiguration>(input, jsonOptions)
         return {
-            Updates = config.Updates |> Array.map mapUpdate
+            Updates = config.Updates |> Array.map (mapUpdate basePath.Parent.Value)
             PrBodyPrefix = config.PrBodyPrefix
         }
     }

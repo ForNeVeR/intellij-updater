@@ -193,13 +193,8 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
 """
     |}
 
-let readConfig path = task {
-    use stream = File.OpenRead path
-    return! Configuration.Read stream
-}
-
 let processData configPath = task {
-    let! config = readConfig configPath
+    let! config = Configuration.Read configPath
     let! latestSpec = ReadLatestSpecs config
     let! currentSpec = ReadCurrentSpecs config
     if latestSpec <> currentSpec then
@@ -213,10 +208,10 @@ let processData configPath = task {
         return NoChanges
 }
 
-let writeOutput result out = task {
+let writeOutput result (out: LocalPath) = task {
     match result with
     | NoChanges ->
-        do! File.WriteAllTextAsync(out, "has-changes=false")
+        do! File.WriteAllTextAsync(out.Value, "has-changes=false")
     | HasChanges changes ->
         let prBodyMarkdownPath = Path.GetTempFileName()
         do! File.WriteAllTextAsync(prBodyMarkdownPath, changes.PrBodyMarkdown)
@@ -226,18 +221,18 @@ commit-message={changes.CommitMessage}
 pr-title={changes.PrTitle}
 pr-body-path={prBodyMarkdownPath}
 """
-        do! File.WriteAllTextAsync(out, text.ReplaceLineEndings "\n")
+        do! File.WriteAllTextAsync(out.Value, text.ReplaceLineEndings "\n")
 
     printfn $"Result printed to \"{out}\"."
 }
 
 type Args = {
-    ConfigPath: string
-    OutputPath: string
+    ConfigPath: LocalPath
+    OutputPath: LocalPath
 }
 
-let readArgs = function
-| [| config; output |] -> { ConfigPath = config; OutputPath = output }
+let readArgs: string[] -> Args = function
+| [| config; output |] -> { ConfigPath = LocalPath config; OutputPath = LocalPath output }
 | _ -> failwith "Arguments expected: <config-file-path> <output-file-path>"
 
 [<EntryPoint>]
