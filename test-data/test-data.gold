@@ -4,4 +4,3 @@ commit-message=Dependencies: update IntelliJ-based IDE versions
 pr-title=IntelliJ Update
 pr-body= ## Version Updates
 - `test-data/config.toml:riderSdkVersion`: 2023.3 -> 2024.1.4
-- `test-data/config.properties:untilBuildVersion`: 241.* -> 243.*
