@@ -10,7 +10,105 @@ This is a small tool that will help you to manage IntelliJ-based IDE version upd
 
 Usage
 -----
-[See in AvaloniaRider repo][usage.avalonia-rider].
+### Example
+Add a following file, `intellij-updater.json`, to your repository:
+```json
+{
+    "updates": [{
+        "file": "gradle/libs.versions.toml",
+        "field": "riderSdk",
+        "kind": "rider",
+        "versionFlavor": "release"
+    }, {
+        "file": "gradle/libs.versions.toml",
+        "field": "riderSdkPreview",
+        "kind": "rider",
+        "versionFlavor": "eap"
+    }, {
+        "file": "config.properties",
+        "field": "untilBuildVersion",
+        "kind": "rider",
+        "versionFlavor": "release",
+        "augmentation": "nextMajor"
+    }],
+    "prBodyPrefix": "## Maintainer Note\n> [!WARNING]\n> This PR will not trigger CI by default. Please **close it and reopen manually** to trigger the CI.\n>\n> Unfortunately, this is a consequence of the current GitHub Action security model (by default, PRs created automatically aren't allowed to trigger other automation)."
+}
+```
+
+And then start it periodically on CI and make it generate a PR using any PR-generating action you like, e.g.:
+```yaml
+name: "Dependency Checker"
+on:
+  schedule:
+    - cron: '0 0 * * *' # Every day
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  main:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: "Check out the sources"
+        uses: actions/checkout@v4
+
+      - id: update
+        uses: ForNeVeR/intellij-updater@v1
+        name: "Update the dependency versions"
+        with:
+          config-file: ./intellij-updater.json # the default
+
+      - if: steps.update.outputs.has-changes == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        name: "Create a PR"
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ steps.update.outputs.branch-name }}
+          author: "Automation <your@email>"
+          commit-message: ${{ steps.update.outputs.commit-message }}
+          title: ${{ steps.update.outputs.pr-title }}
+          body-path: ${{ steps.update.outputs.pr-body-path }}
+```
+
+This will perform the following operation every day:
+1. Check the latest versions of Rider available in the JetBrains Maven repository.
+2. Update the `riderSdk` to the latest stable Rider version and `riderSdkPreview` to the latest EAP Rider version in the `config.toml` file.
+3. Update the `untilBuildVersion` to the _next major Rider wave_ in the `config.properties` file (e.g. if the current in 2024.1 aka 241, then it will be updated to `242.*`, for your plugin to be auto-compatible with the next version).
+4. Create a PR with the changes (if started manually or by schedule; otherwise, a "dry run" is performed, where the action checks the validity of the current configuration).
+
+> [!NOTE]
+> The `prBodyPrefix` value in this example is added to the pull request title. In this example, we are adding a note for the maintainer to bootstrap the CI manually, because this is one of the current recommendations from the [create-pull-request][] action. This is not inherently required by this action: follow the recommendation of the PR-creating action of your choice.
+
+### Configuration
+The action itself accepts only one optional parameter: `config-file`. If not passed, it will default to `./intellij-updater.json`.
+
+The configuration file spec:
+```json
+{
+    "updates": [
+        {
+            "file": "File path relative to this config file's parent directory. Accepts .toml or Java .properties files.",
+            "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
+            "kind": "rider | intellij-idea-community",
+            "versionFlavor": "release | eap | nightly",
+            "versionConstraint": "<=SomeValidVersion (only one kind of constraint is supported for now)",
+            "augmentation": "optional field, might contain 'nextMajor'"
+        }
+    ],
+    "prBodyPrefix": "optional string"
+}
+```
+
+### Parameters
+Action's output parameters are documented in [the action file itself][action-yml], check the `outputs` section.
+
+
+### Notes
+Please note that this action installs .NET SDK during its execution. It's recommended to isolate it from other build steps in your CI.
 
 Documentation
 -------------
@@ -23,7 +121,8 @@ The project is distributed under the terms of [the MIT license][docs.license]
 
 The license indication in the project's sources is compliant with the [REUSE specification v3.2][reuse.spec].
 
+[action-yml]: action.yml
+[create-pull-request]: https://github.com/peter-evans/create-pull-request
 [docs.contributing]: CONTRIBUTING.md
 [docs.license]: LICENSE.md
 [reuse.spec]: https://reuse.software/spec-3.2/
-[usage.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/2cc37a80f51aaa8d62d5be0b9568002b85dd3568/.github/workflows/dependencies.yml
