@@ -20,7 +20,7 @@ param (
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
-$prBody = Get-Content -LiteralPath $PrBodyPath
+$prBody = Get-Content -LiteralPath $PrBodyPath -Raw
 
 @"
 has-changes=$HasChanges

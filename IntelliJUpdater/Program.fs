@@ -48,8 +48,9 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
 let private Augment (augmentation: Augmentation option) (entityVersion: EntityVersion) =
     match entityVersion, augmentation with
     | EntityVersion.Ide version, Some NextMajor ->
-        let (YearBased(year, _)) = version.Wave
-        EntityVersion.NextMajor year
+        let (YearBased(year, number)) = version.Wave
+        let wave = year / 100 * 10 + number
+        EntityVersion.NextMajor wave
     | _, None -> entityVersion
     | _ -> failwithf $"Unsupported entity version and augmentation: {entityVersion} with {augmentation}."
 
@@ -176,7 +177,7 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
             let updated = remoteMap[key]
 
             let file, field = key
-            $"- {file}:{field}: {toString old} -> {toString updated}"
+            $"- `{file}:{field}`: {toString old} -> {toString updated}"
     |]
 
     let preSection =
