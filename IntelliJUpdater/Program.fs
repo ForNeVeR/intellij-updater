@@ -174,6 +174,7 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
     let preSection =
         config.PrBodyPrefix
         |> Option.map(fun x -> x + "\n\n")
+        |> Option.defaultValue ""
 
     {|
         BranchName = "dependencies/intellij"
