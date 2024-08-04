@@ -15,6 +15,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 function CompareFiles($expected, $actual) {
+    Write-Output "Comparing files $expected and $actual"
     $expectedContent = Get-Content -LiteralPath $expected
     $actualContent = Get-Content -LiteralPath $actual
     $diff = Compare-Object -ReferenceObject $expectedContent -DifferenceObject $actualContent -SyncWindow 0
