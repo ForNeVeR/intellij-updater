@@ -57,7 +57,6 @@ let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> = task {
     return Array.ofSeq results
 }
 
-
 let private ReadValue (filePath: LocalPath) (key: string) =
     match filePath.GetExtensionWithoutDot() with
     | "toml" -> TomlFile.ReadValue filePath key
