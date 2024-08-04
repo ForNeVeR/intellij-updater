@@ -23,7 +23,7 @@ type IdeFlavor =
         else if x = "" then Stable
         else failwithf $"Cannot parse IDE flavor: {x}."
 
-type IdeVersion = // TODO[#358]: Verify ordering
+type IdeVersion = // TODO[#6]: Verify ordering
     {
         Wave: IdeWave
         Patch: int

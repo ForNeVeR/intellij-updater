@@ -9,7 +9,7 @@ open System.Text.RegularExpressions
 open System.Threading.Tasks
 open TruePath
 
-// TODO: All these methods won't properly handle the first line in the file.
+// TODO[#7]: All these methods won't properly handle the first line in the file.
 
 module TomlFile =
     let ReadValue (tomlFile: LocalPath) (key: string): Task<string> = task {
