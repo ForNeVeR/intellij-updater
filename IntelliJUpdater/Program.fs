@@ -193,14 +193,30 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
 """
     |}
 
+let private FindChangedItems (localSpec: StoredEntityVersion[]) (remoteSpec: StoredEntityVersion[]) =
+    let toMap specs =
+        specs
+        |> Seq.map(fun x -> KeyValuePair((x.File, x.Field), x))
+        |> Dictionary
+
+    let localMap = toMap localSpec
+    let remoteMap = toMap remoteSpec
+
+    localMap
+    |> Seq.filter(fun kvp -> kvp.Value.Update <> remoteMap[kvp.Key].Update)
+    |> Seq.map _.Value
+    |> Seq.toArray
+
 let processData configPath = task {
     let! config = Configuration.Read configPath
     let! latestSpec = ReadLatestSpecs config
     let! currentSpec = ReadCurrentSpecs config
-    if latestSpec <> currentSpec then
+    let diff = FindChangedItems currentSpec latestSpec
+    if not <| Array.isEmpty diff then
         printfn "Changes detected."
-        printfn $"Local spec: {currentSpec}."
-        printfn $"Remote spec: {latestSpec}."
+        printfn $"Local spec: %A{currentSpec}."
+        printfn $"Remote spec: %A{latestSpec}."
+        printfn $"Changes: %A{diff}."
         do! ApplySpec latestSpec
         return HasChanges <| GenerateResult config currentSpec latestSpec
     else
