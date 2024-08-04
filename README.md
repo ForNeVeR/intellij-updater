@@ -8,6 +8,10 @@ intellij-updater
 ================
 This is a small tool that will help you to manage IntelliJ-based IDE version update in a plugin repository.
 
+Missing a feature? Report to [the issues][issues].
+
+Want to contribute? Check out [the contributing guide][docs.contributing].
+
 Usage
 -----
 ### Example
@@ -25,7 +29,7 @@ Add a following file, `intellij-updater.json`, to your repository:
         "kind": "rider",
         "versionFlavor": "eap"
     }, {
-        "file": "config.properties",
+        "file": "gradle.properties",
         "field": "untilBuildVersion",
         "kind": "rider",
         "versionFlavor": "release",
@@ -77,7 +81,7 @@ jobs:
 This will perform the following operation every day:
 1. Check the latest versions of Rider available in the JetBrains Maven repository.
 2. Update the `riderSdk` to the latest stable Rider version and `riderSdkPreview` to the latest EAP Rider version in the `config.toml` file.
-3. Update the `untilBuildVersion` to the _next major Rider wave_ in the `config.properties` file (e.g. if the current in 2024.1 aka 241, then it will be updated to `242.*`, for your plugin to be auto-compatible with the next version).
+3. Update the `untilBuildVersion` to the _next major Rider wave_ in the `gradle.properties` file (e.g. if the current in 2024.1 aka 241, then it will be updated to `242.*`, for your plugin to be auto-compatible with the next version).
 4. Create a PR with the changes (if started manually or by schedule; otherwise, a "dry run" is performed, where the action checks the validity of the current configuration).
 
 > [!NOTE]
@@ -129,4 +133,5 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [docs.contributing]: CONTRIBUTING.md
 [docs.license]: LICENSE.md
 [docs.maintaining]: MAINTAINING.md
+[issues]: https://github.com/ForNeVeR/intellij-updater/issues
 [reuse.spec]: https://reuse.software/spec-3.2/
