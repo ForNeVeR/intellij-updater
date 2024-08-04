@@ -45,17 +45,18 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
         return EntityVersion.Kotlin kotlinVersion
     }
 
-let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> =
-    config.Updates
-    |> Seq.map(fun update -> task {
+let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> = task {
+    let results = ResizeArray()
+    for update in config.Updates do
         let! entityVersion = ReadLatestSpec update
-        return {
+        results.Add {
             File = update.File
             Field = update.Field
             Update = entityVersion |> Augmentations.Augment update.Augmentation
         }
-    })
-    |> Task.WhenAll
+    return Array.ofSeq results
+}
+
 
 let private ReadValue (filePath: LocalPath) (key: string) =
     match filePath.GetExtensionWithoutDot() with
