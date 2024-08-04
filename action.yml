@@ -19,9 +19,6 @@ outputs:
   branch-name:
     description: 'The branch name that should be used for the generated pull request. Only available if `has-changes` is `true`.'
     value: ${{ steps.update.outputs.branch-name }}
-  author-name:
-    description: 'The `author name <email>` for the generated pull request. Only available if `has-changes` is `true`.'
-    value: ${{ steps.update.outputs.author-name }}
   commit-message:
     description: 'The commit message for the generated commit. Only available if `has-changes` is `true`.'
     value: ${{ steps.update.outputs.commit-message }}

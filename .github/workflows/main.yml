@@ -60,7 +60,6 @@ jobs:
         env:
           HAS_CHANGES: ${{ steps.test.outputs.has-changes }}
           BRANCH_NAME: ${{ steps.test.outputs.branch-name }}
-          AUTHOR_NAME: ${{ steps.test.outputs.author-name }}
           COMMIT_MESSAGE: ${{ steps.test.outputs.commit-message }}
           PR_TITLE: ${{ steps.test.outputs.pr-title }}
           PR_BODY_PATH: ${{ steps.test.outputs.pr-body-path }}
@@ -68,7 +67,6 @@ jobs:
           scripts/New-TestResultFile.ps1 `
             -HasChanges $env:HAS_CHANGES `
             -BranchName $env:BRANCH_NAME `
-            -AuthorName $env:AUTHOR_NAME `
             -CommitMessage $env:COMMIT_MESSAGE `
             -PrTitle $env:PR_TITLE `
             -PrBodyPath $env:PR_BODY_PATH `

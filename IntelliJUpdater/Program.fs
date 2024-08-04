@@ -184,9 +184,9 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
         |> Option.map(fun x -> x + "\n\n")
 
     {|
-        BranchName = "dependencies/rider"
-        CommitMessage = "Dependencies: update Rider"
-        PrTitle = "Rider Update"
+        BranchName = "dependencies/intellij"
+        CommitMessage = "Dependencies: update IntelliJ-based IDE versions"
+        PrTitle = "IntelliJ Update"
         PrBodyMarkdown = $"""
 {preSection}## Version Updates
 {message}
