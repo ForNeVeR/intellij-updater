@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
 
       - id: update
-        uses: ForNeVeR/intellij-updater@v1
+        uses: ForNeVeR/intellij-updater@main
         name: "Update the dependency versions"
         with:
           config-file: ./intellij-updater.json # the default

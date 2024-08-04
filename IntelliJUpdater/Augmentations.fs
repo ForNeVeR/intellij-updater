@@ -15,7 +15,10 @@ let private NextVersion year number =
 let Augment (augmentation: Augmentation option) (entityVersion: EntityVersion): EntityVersion =
     match entityVersion, augmentation with
     | EntityVersion.Ide version, Some NextMajor ->
-        let (YearBased(year, number)) = version.Wave
+        let year, number =
+            match version.Wave with
+            | YearBased(year, number) -> year, number
+            | _ -> failwithf $"Unsupported IDE version wave: {version.Wave}."
         let nextYear, nextNumber = NextVersion year number
         let wave = nextYear % 100 * 10 + nextNumber
         EntityVersion.NextMajor wave

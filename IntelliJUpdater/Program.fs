@@ -66,13 +66,13 @@ let private ReadValue (filePath: LocalPath) (key: string) =
 let private ReadVersion(update: Update): Task<StoredEntityVersion> = task {
     let! version =
         match update.Kind, update.Augmentation with
-        | Ide key, None ->
+        | Ide _, None ->
             task {
                 let! text = ReadValue update.File update.Field
                 let version = IdeVersion.Parse text
                 return EntityVersion.Ide version
             }
-        | Ide key, Some NextMajor ->
+        | Ide _, Some NextMajor ->
             task {
                 let! text = ReadValue update.File update.Field
                 let waveNumber = text.Replace(".*", "") |> int
@@ -136,7 +136,10 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
     let diff = localMap |> Seq.filter(fun kvp -> kvp.Value.Update <> remoteMap[kvp.Key].Update)
 
     let fullVersion v =
-        let (YearBased(year, number)) = v.Wave
+        let year, number =
+            match v.Wave with
+            | YearBased(year, number) -> year, number
+            | _ -> failwithf $"Unsupported IDE version wave: {v.Wave}."
         String.concat "" [|
             string year
             "."

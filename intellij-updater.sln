@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		MAINTAINING.md = MAINTAINING.md
 		LICENSE.md = LICENSE.md
 		CHANGELOG.md = CHANGELOG.md
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliJUpdater.Tests", "IntelliJUpdater.Tests\IntelliJUpdater.Tests.fsproj", "{014ECC9F-EC27-4D23-9790-460F40A388DC}"
