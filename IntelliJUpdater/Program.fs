@@ -45,15 +45,6 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
         return EntityVersion.Kotlin kotlinVersion
     }
 
-let private Augment (augmentation: Augmentation option) (entityVersion: EntityVersion) =
-    match entityVersion, augmentation with
-    | EntityVersion.Ide version, Some NextMajor ->
-        let (YearBased(year, number)) = version.Wave
-        let wave = year / 100 * 10 + number
-        EntityVersion.NextMajor wave
-    | _, None -> entityVersion
-    | _ -> failwithf $"Unsupported entity version and augmentation: {entityVersion} with {augmentation}."
-
 let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> =
     config.Updates
     |> Seq.map(fun update -> task {
@@ -61,7 +52,7 @@ let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> =
         return {
             File = update.File
             Field = update.Field
-            Update = entityVersion |> Augment update.Augmentation
+            Update = entityVersion |> Augmentations.Augment update.Augmentation
         }
     })
     |> Task.WhenAll

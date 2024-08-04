@@ -17,6 +17,7 @@ SPDX-License-Identifier: MIT
         <Compile Include="Ide.fs" />
         <Compile Include="ConfigFile.fs" />
         <Compile Include="Kotlin.fs" />
+        <Compile Include="Augmentations.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
