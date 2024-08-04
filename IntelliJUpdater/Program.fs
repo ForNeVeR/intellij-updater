@@ -194,8 +194,8 @@ let private FindChangedItems (localSpec: StoredEntityVersion[]) (remoteSpec: Sto
     let localMap = toMap localSpec
     let remoteMap = toMap remoteSpec
 
-    localMap
-    |> Seq.filter(fun kvp -> kvp.Value.Update <> remoteMap[kvp.Key].Update)
+    remoteMap
+    |> Seq.filter(fun kvp -> kvp.Value.Update <> localMap[kvp.Key].Update)
     |> Seq.map _.Value
     |> Seq.toArray
 
@@ -209,7 +209,7 @@ let processData configPath = task {
         printfn $"Local spec: %A{currentSpec}."
         printfn $"Remote spec: %A{latestSpec}."
         printfn $"Changes: %A{diff}."
-        do! ApplySpec latestSpec
+        do! ApplySpec diff
         return HasChanges <| GenerateResult config currentSpec latestSpec
     else
         printfn $"No changes detected: both local and remote specs are {latestSpec}."
