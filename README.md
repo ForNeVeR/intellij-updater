@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
 SPDX-License-Identifier: MIT
 -->
 
-intellij-updater
+intellij-updater [![Status Aquana][status-aquana]][andivionian-status-classifier]
 ================
 This is a small tool that will help you to manage IntelliJ-based IDE version update in a plugin repository.
 
@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@v4
 
       - id: update
-        uses: ForNeVeR/intellij-updater@main
+        uses: ForNeVeR/intellij-updater@v1
         name: "Update the dependency versions"
         with:
           config-file: ./intellij-updater.json # the default
@@ -128,6 +128,7 @@ The project is distributed under the terms of [the MIT license][docs.license]
 The license indication in the project's sources is compliant with the [REUSE specification v3.2][reuse.spec].
 
 [action-yml]: action.yml
+[andivionian-status-classifier]: https://andivionian.fornever.me/v1/#status-aquana-
 [create-pull-request]: https://github.com/peter-evans/create-pull-request
 [docs.changelog]: CHANGELOG.md
 [docs.contributing]: CONTRIBUTING.md
@@ -135,3 +136,4 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [docs.maintaining]: MAINTAINING.md
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
 [reuse.spec]: https://reuse.software/spec-3.2/
+[status-aquana]: https://img.shields.io/badge/status-aquana-yellowgreen.svg
