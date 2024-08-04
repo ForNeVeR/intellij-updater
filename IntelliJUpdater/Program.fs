@@ -225,20 +225,22 @@ let processData configPath = task {
 }
 
 let writeOutput result (out: LocalPath) = task {
-    match result with
-    | NoChanges ->
-        do! File.WriteAllTextAsync(out.Value, "has-changes=false")
-    | HasChanges changes ->
-        let prBodyMarkdownPath = Path.GetTempFileName()
-        do! File.WriteAllTextAsync(prBodyMarkdownPath, changes.PrBodyMarkdown)
-        let text = $"""has-changes=true
+    let! text =
+        match result with
+        | NoChanges -> Task.FromResult "has-changes=false"
+        | HasChanges changes -> task {
+            let prBodyMarkdownPath = Path.GetTempFileName()
+            do! File.WriteAllTextAsync(prBodyMarkdownPath, changes.PrBodyMarkdown)
+            return $"""has-changes=true
 branch-name={changes.BranchName}
 commit-message={changes.CommitMessage}
 pr-title={changes.PrTitle}
 pr-body-path={prBodyMarkdownPath}
 """
-        do! File.WriteAllTextAsync(out.Value, text.ReplaceLineEndings "\n")
+        }
 
+    do! File.WriteAllTextAsync(out.Value, text.ReplaceLineEndings "\n")
+    printfn $"{text}"
     printfn $"Result printed to \"{out}\"."
 }
 
