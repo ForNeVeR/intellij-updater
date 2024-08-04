@@ -16,11 +16,10 @@ Set-StrictMode -Version Latest
 
 function CompareFiles($expected, $actual) {
     Write-Output "Comparing files $expected and $actual"
-    $expectedContent = Get-Content -LiteralPath $expected
-    $actualContent = Get-Content -LiteralPath $actual
-    $diff = Compare-Object -ReferenceObject $expectedContent -DifferenceObject $actualContent -SyncWindow 0
+    $expectedContent = (Get-Content -LiteralPath $expected -Raw).Trim().ReplaceLineEndings("`n")
+    $actualContent = (Get-Content -LiteralPath $actual -Raw).Trim().ReplaceLineEndings("`n")
 
-    if ($diff) {
+    if ($expectedContent -ne $actualContent) {
         Write-Output "Files $expected and $actual are different. Expected:"
         Write-Output $expectedContent
         Write-Output "Actual:"
