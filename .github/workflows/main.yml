@@ -73,8 +73,7 @@ jobs:
             -OutFile test-data/test-result.txt
       - name: Assert test results
         shell: pwsh
-        run: |
-          scripts/Assert-TestResult.ps1 `
+        run: scripts/Assert-TestResult.ps1 `
             -ExpectedFile test-data/test-data.gold `
             -ActualFile test-data/test-result.txt `
             -AdditionalFiles @('test-data/config.toml', 'test-data/config.properties')
