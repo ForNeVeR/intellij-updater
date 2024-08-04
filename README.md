@@ -112,7 +112,9 @@ Please note that this action installs .NET SDK during its execution. It's recomm
 
 Documentation
 -------------
+- [Changelog][docs.changelog]
 - [Contributor Guide][docs.contributing]
+- [Maintainer Guid][docs.maintaining]
 
 License
 -------
@@ -123,6 +125,8 @@ The license indication in the project's sources is compliant with the [REUSE spe
 
 [action-yml]: action.yml
 [create-pull-request]: https://github.com/peter-evans/create-pull-request
+[docs.changelog]: CHANGELOG.md
 [docs.contributing]: CONTRIBUTING.md
 [docs.license]: LICENSE.md
+[docs.maintaining]: MAINTAINING.md
 [reuse.spec]: https://reuse.software/spec-3.2/
