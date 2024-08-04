@@ -179,8 +179,7 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
         BranchName = "dependencies/intellij"
         CommitMessage = "Dependencies: update IntelliJ-based IDE versions"
         PrTitle = "IntelliJ Update"
-        PrBodyMarkdown = $"""
-{preSection}## Version Updates
+        PrBodyMarkdown = $"""{preSection}## Version Updates
 {message}
 """
     |}
