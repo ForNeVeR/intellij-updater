@@ -1,0 +1,5 @@
+has-changes=true
+branch-name=test
+commit-message=Update IntelliJ versions
+pr-title=
+pr-body=

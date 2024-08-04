@@ -25,6 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-data", "test-data", "{
 		test-data\test-config.json = test-data\test-config.json
 		test-data\config.toml = test-data\config.toml
 		test-data\config.properties = test-data\config.properties
+		test-data\test-data.gold = test-data\test-data.gold
+		test-data\test-config.json.license = test-data\test-config.json.license
+		test-data\test-data.gold.license = test-data\test-data.gold.license
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{F819DECB-8F23-47F5-900F-2075FA0614C3}"
