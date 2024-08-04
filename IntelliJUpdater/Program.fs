@@ -215,7 +215,7 @@ let processData configPath = task {
         do! ApplySpec diff
         return HasChanges <| GenerateResult config currentSpec latestSpec
     else
-        printfn $"No changes detected: both local and remote specs are {latestSpec}."
+        printfn $"No changes detected: both local and remote specs are %A{latestSpec}."
         return NoChanges
 }
 
