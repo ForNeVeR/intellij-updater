@@ -39,7 +39,7 @@ module PropertiesFile =
 
     let WriteValue (propertiesFile: LocalPath) (key: string) (value: string): Task<bool> = task {
         let! properties = File.ReadAllTextAsync propertiesFile.Value
-        let re = Regex @"\r?\n{Regex.Escape key}=(.*?)\r?\n"
+        let re = Regex $@"\r?\n{Regex.Escape key}=(.*?)\r?\n"
         let newContent = re.Replace(properties, $"\n{key}={value}\n")
         do! File.WriteAllTextAsync(propertiesFile.Value, newContent)
         return properties <> newContent
