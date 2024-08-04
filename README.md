@@ -15,6 +15,8 @@ Want to contribute? Check out [the contributing guide][docs.contributing].
 Usage
 -----
 ### Example
+See a live example [in AvaloniaRider repository][example.avalonia-rider].
+
 Add a following file, `intellij-updater.json`, to your repository:
 ```json
 {
@@ -134,6 +136,7 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [docs.contributing]: CONTRIBUTING.md
 [docs.license]: LICENSE.md
 [docs.maintaining]: MAINTAINING.md
+[example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
 [reuse.spec]: https://reuse.software/spec-3.2/
 [status-aquana]: https://img.shields.io/badge/status-aquana-yellowgreen.svg
