@@ -7,6 +7,24 @@ SPDX-License-Identifier: MIT
 Contributor Guide
 =================
 
+Prerequisites
+-------------
+[Install .NET SDK][dotnet] version 8 or later.
+
+Build
+-----
+Execute the following shell command:
+```console
+$ dotnet build
+```
+
+Test
+----
+Execute the following shell command:
+```console
+$ dotnet test
+```
+
 License Automation
 ------------------
 If the CI asks you to update the file licenses, follow one of these:
@@ -24,4 +42,5 @@ If the CI asks you to update the file licenses, follow one of these:
 
 (Feel free to attribute the changes to "intellij-updater contributors <https://github.com/ForNeVeR/intellij-updater>" instead of your name in a multi-author file, or if you don't want your name to be mentioned in the project's source: this doesn't mean you'll lose the copyright.)
 
+[dotnet]: https://dot.net/
 [reuse]: https://reuse.software/
