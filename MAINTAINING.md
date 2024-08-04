@@ -20,8 +20,8 @@ To release a new version:
 7. Merge the changes via a pull request.
 8. Push a tag named `v<VERSION>` to GitHub.
 9. Create a new [release][releases] on GitHub.
-   - Release title should be "ChangelogAutomation.action v<VERSION>"
-   - Release notes could be copy-pasted from the `CHANGELOG.md` file
+   - Release title should be "intellij-updater v<VERSION>".
+   - Release notes could be copy-pasted from the `CHANGELOG.md` file (omitting the release title line).
 10. Make sure to also update the current rolling major release tag (say, `v1`) to the new version.
 
 [semver]: https://semver.org/spec/v2.0.0.html
