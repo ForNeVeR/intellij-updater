@@ -21,7 +21,10 @@ function CompareFiles($expected, $actual) {
     $diff = Compare-Object -ReferenceObject $expectedContent -DifferenceObject $actualContent -SyncWindow 0
 
     if ($diff) {
-        throw "Files $expected and $actual are different: $(Out-String -InputObject $diff)"
+        Write-Output "Files $expected and $actual are different. Expected:"
+        Write-Output $expectedContent
+
+        throw "Differences detected."
     }
 }
 
