@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{F819
 	ProjectSection(SolutionItems) = preProject
 		scripts\Test-Encoding.ps1 = scripts\Test-Encoding.ps1
 		scripts\New-TestResultFile.ps1 = scripts\New-TestResultFile.ps1
+		scripts\Assert-TestResult.ps1 = scripts\Assert-TestResult.ps1
 	EndProjectSection
 EndProject
 Global
