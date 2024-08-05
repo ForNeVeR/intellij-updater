@@ -99,7 +99,7 @@ The configuration file spec:
         {
             "file": "File path relative to this config file's parent directory. Accepts .toml or Java .properties files.",
             "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
-            "kind": "rider | intellij-idea-community",
+            "kind": "kotlin | intellij-idea-community | rider",
             "versionFlavor": "release | eap | nightly",
             "versionConstraint": "<=SomeValidVersion (only one kind of constraint is supported for now)",
             "augmentation": "optional field, might contain 'nextMajor'"
@@ -108,6 +108,8 @@ The configuration file spec:
     "prBodyPrefix": "optional string"
 }
 ```
+
+A `kind` of `kotlin` will update the corresponding field to the correct Kotlin version used by a particular IDE version, see [this table][intellij.kotlin] for details.
 
 A more detailed description of the `versionFlavor` field:
 - `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);
@@ -144,6 +146,7 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [docs.license]: LICENSE.md
 [docs.maintaining]: MAINTAINING.md
 [example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
+[intellij.kotlin]: https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
 [reuse.spec]: https://reuse.software/spec-3.2/
 [status-aquana]: https://img.shields.io/badge/status-aquana-yellowgreen.svg
