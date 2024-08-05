@@ -151,6 +151,8 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
 
             match v.Flavor with
             | Snapshot -> ()
+            | RollingEAP -> " EAP"
+            | RollingEAPCandidate -> " EAP Candidate"
             | EAP(n, dev) ->
                 let d = if dev then "D" else ""
                 $" EAP{string n}{d}"

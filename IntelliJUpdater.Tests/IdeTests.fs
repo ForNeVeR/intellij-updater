@@ -4,6 +4,8 @@
 
 module IntelliJUpdater.Tests.IdeTests
 
+open System.IO
+open System.Text
 open System.Threading.Tasks
 open IntelliJUpdater
 open IntelliJUpdater.Versioning
@@ -32,3 +34,43 @@ let ``IntelliJ IDEA Community version is read``(): Task = task {
     }
     Assert.Equal(expected, version)
 }
+
+[<Fact>]
+let ``IntelliJ versions are supported``(): Task = task {
+    let xml = """<metadata>
+    <groupId>com.jetbrains.intellij.idea</groupId>
+    <artifactId>ideaIC</artifactId>
+    <versioning>
+        <latest>242.20224.159-EAP-SNAPSHOT</latest>
+        <versions>
+            <version>LATEST-EAP-SNAPSHOT</version>
+            <version>231-EAP-SNAPSHOT</version>
+            <version>231.9423-EAP-CANDIDATE-SNAPSHOT</version>
+        </versions>
+    </versioning>
+</metadata>"""
+    let expectedVersions = [|
+        { Wave = Latest; Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+        { Wave = YearBasedVersion(231, 0); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+        { Wave = YearBasedVersion(231, 9423); Patch = 0; Flavor = RollingEAPCandidate; IsSnapshot = true }
+    |]
+
+    use stream = new MemoryStream(Encoding.UTF8.GetBytes xml)
+    let! versions = Ide.ReadVersionsFromStream(stream)
+    Assert.Equal<IdeVersion>(expectedVersions, versions)
+}
+
+[<Fact>]
+let ``IntelliJ versions are properly selected``(): unit =
+    let latest = { Wave = Latest; Patch = 0; Flavor = Snapshot; IsSnapshot = true }
+    let rollingEap = { Wave = YearBasedVersion(231, 0); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+    let eap = { Wave = YearBasedVersion(231, 9423); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+    let versions = [|
+        latest
+        rollingEap
+        eap
+    |]
+    let latestNightly = Ide.SelectLatestVersion UpdateFlavor.Nightly None versions
+    let latestEap = Ide.SelectLatestVersion UpdateFlavor.EAP None versions
+    Assert.Equal(latest, latestNightly)
+    Assert.Equal(eap, latestEap)

@@ -109,6 +109,13 @@ The configuration file spec:
 }
 ```
 
+A more detailed description of the `versionFlavor` field:
+- `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);
+- `nightly` takes the latest possible version, no questions asked;
+- `eap` takes the latest _numbered_ EAP version, meaning it won't take `231-EAP-SNAPSHOT` from IntelliJ (because these are not numbered).
+
+The point of this is to have a tested PR each time a new EAP IDE version is released, to avoid silent snapshot updates breaking compilation and tests.
+
 ### Parameters
 Action's output parameters are documented in [the action file itself][action-yml], check the `outputs` section.
 

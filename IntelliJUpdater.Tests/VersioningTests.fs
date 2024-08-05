@@ -25,3 +25,13 @@ let ``Number-based wave parser``(version: string, major: int, minor: int, patch:
     let expected = YearBasedVersion(major, minor)
     Assert.Equal(expected, version.Wave)
     Assert.Equal(patch, version.Patch)
+
+[<Fact>]
+let ``IntelliJ toString``(): unit =
+    let latest = { Wave = Latest; Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+    let rollingEap = { Wave = YearBasedVersion(231, 0); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+    let eap = { Wave = YearBasedVersion(231, 9423); Patch = 0; Flavor = RollingEAPCandidate; IsSnapshot = true }
+
+    Assert.Equal("LATEST-EAP-SNAPSHOT", latest.ToString())
+    Assert.Equal("231-EAP-SNAPSHOT", rollingEap.ToString())
+    Assert.Equal("231.9423-EAP-CANDIDATE-SNAPSHOT", eap.ToString())
