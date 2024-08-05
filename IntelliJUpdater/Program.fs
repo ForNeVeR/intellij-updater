@@ -135,34 +135,9 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
 
     let diff = localMap |> Seq.filter(fun kvp -> kvp.Value.Update <> remoteMap[kvp.Key].Update)
 
-    let fullVersion v =
-        let year, number =
-            match v.Wave with
-            | YearBased(year, number) -> year, number
-            | _ -> failwithf $"Unsupported IDE version wave: {v.Wave}."
-        String.concat "" [|
-            string year
-            "."
-            string number
-
-            if v.Patch <> 0 then
-                "."
-                string v.Patch
-
-            match v.Flavor with
-            | Snapshot -> ()
-            | RollingEAP -> " EAP"
-            | RollingEAPCandidate -> " EAP Candidate"
-            | EAP(n, dev) ->
-                let d = if dev then "D" else ""
-                $" EAP{string n}{d}"
-            | RC n -> $" RC{string n}"
-            | Stable -> ()
-        |]
-
     let toString item =
         match item.Update with
-        | EntityVersion.Ide version -> fullVersion version
+        | EntityVersion.Ide version -> version.ToString()
         | EntityVersion.Kotlin version -> version.ToString()
         | EntityVersion.NextMajor waveNumber -> $"{waveNumber}.*"
 
