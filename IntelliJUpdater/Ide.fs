@@ -43,8 +43,8 @@ let private CreateFlavorFilter = function
             // - consider releases 231.1111-EAP as "EAP" ones
             // - consider releases 231-EAP as "not EAP" ones, i.e. only snapshots
             // This allows to handle such updates practically, i.e. generate actual pull requests on new EAP update.
-            match version.Wave with
-            | YearBasedVersion(_, version) -> version > 0
+            match version.Wave, version.FullVersion with
+            | YearBasedVersion _, FullVersion(_, Some minor, _, _) -> minor > 0
             | _ -> false
         | EAP _ -> true
         | RC _ -> true

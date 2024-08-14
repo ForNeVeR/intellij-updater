@@ -16,7 +16,7 @@ let ``Rider version is read``(): Task = task {
     let! version = Ide.ReadLatestVersion IdeKind.Rider Release (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4")))
     let expected = {
         Wave = YearBased(2024, 1)
-        Patch = 4
+        FullVersion = FullVersion.Parse "2024.1.4"
         Flavor = Stable
         IsSnapshot = false
     }
@@ -28,7 +28,7 @@ let ``IntelliJ IDEA Community version is read``(): Task = task {
     let! version = Ide.ReadLatestVersion IdeKind.IntelliJIdeaCommunity Release (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4")))
     let expected = {
         Wave = YearBased(2024, 1)
-        Patch = 4
+        FullVersion = FullVersion.Parse "2024.1.4"
         Flavor = Stable
         IsSnapshot = false
     }
@@ -50,9 +50,12 @@ let ``IntelliJ versions are supported``(): Task = task {
     </versioning>
 </metadata>"""
     let expectedVersions = [|
-        { Wave = Latest; Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
-        { Wave = YearBasedVersion(231, 0); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
-        { Wave = YearBasedVersion(231, 9423); Patch = 0; Flavor = RollingEAPCandidate; IsSnapshot = true }
+        { Wave = Latest; FullVersion = FullVersion.None; Flavor = RollingEAP; IsSnapshot = true }
+        { Wave = YearBasedVersion(231); FullVersion = FullVersion.Parse "231"; Flavor = RollingEAP; IsSnapshot = true }
+        { Wave = YearBasedVersion(231)
+          FullVersion = FullVersion.Parse "231.9423"
+          Flavor = RollingEAPCandidate
+          IsSnapshot = true }
     |]
 
     use stream = new MemoryStream(Encoding.UTF8.GetBytes xml)
@@ -62,9 +65,15 @@ let ``IntelliJ versions are supported``(): Task = task {
 
 [<Fact>]
 let ``IntelliJ versions are properly selected``(): unit =
-    let latest = { Wave = Latest; Patch = 0; Flavor = Snapshot; IsSnapshot = true }
-    let rollingEap = { Wave = YearBasedVersion(231, 0); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
-    let eap = { Wave = YearBasedVersion(231, 9423); Patch = 0; Flavor = RollingEAP; IsSnapshot = true }
+    let latest = { Wave = Latest; FullVersion = FullVersion.None; Flavor = Snapshot; IsSnapshot = true }
+    let rollingEap = { Wave = YearBasedVersion 231
+                       FullVersion = FullVersion.Parse "231.0"
+                       Flavor = RollingEAP
+                       IsSnapshot = true }
+    let eap = { Wave = YearBasedVersion 231
+                FullVersion = FullVersion.Parse "231.9423"
+                Flavor = RollingEAP
+                IsSnapshot = true }
     let versions = [|
         latest
         rollingEap

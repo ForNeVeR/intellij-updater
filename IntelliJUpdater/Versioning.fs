@@ -6,9 +6,28 @@ module IntelliJUpdater.Versioning
 
 open System
 
+type FullVersion =
+    | FullVersion of major: int option * minor: int option * patch: int option * build: int option
+
+    static member None = FullVersion(None, None, None, None)
+
+    static member Parse(s: string) =
+        if s = "LATEST" then FullVersion.None else
+        match s.Split '.' with
+        | [| major |] -> FullVersion(Some(int major), None, None, None)
+        | [| major; minor |] -> FullVersion(Some(int major), Some(int minor), None, None)
+        | [| major; minor; patch |] -> FullVersion(Some(int major), Some(int minor), Some(int patch), None)
+        | [| major; minor; patch; build |] ->
+            FullVersion(Some(int major), Some(int minor), Some(int patch), Some(int build))
+        | _ -> failwithf $"Cannot parse full version: {s}."
+
+    override this.ToString() =
+        let (FullVersion(major, minor, patch, build)) = this
+        seq { major; minor; patch; build } |> Seq.choose id |> Seq.map string |> String.concat "."
+
 type IdeWave =
     | Legacy of major: int * minor: int // e.g. 14.0
-    | YearBasedVersion of major: int * version: int // e.g. 231.8109
+    | YearBasedVersion of major: int // e.g. 231
     | YearBased of year: int * number: int // 2024.1
     | Latest // literally LATEST
 type IdeFlavor =
@@ -31,32 +50,29 @@ type IdeFlavor =
 type IdeVersion = // TODO[#6]: Verify ordering
     {
         Wave: IdeWave
-        Patch: int
+        FullVersion: FullVersion
         Flavor: IdeFlavor
         IsSnapshot: bool
     }
 
-    static member Parse(description: string) =
+    static member Parse(description: string): IdeVersion =
         let components = description.Split '-'
 
-        let parseComponents (wave: string) flavor isSnapshot =
-            let wave, patch =
-                let waveComponents = wave.Split '.'
+        let parseComponents (waveString: string) flavor isSnapshot =
+            let wave =
+                let waveComponents = waveString.Split '.'
                 match waveComponents with
-                | [| "LATEST" |] -> Latest, 0
+                | [| "LATEST" |] -> Latest
                 | _ ->
-                    let major, minor, patch =
-                        match waveComponents with
-                        | [| major |] when int major < 1000 -> int major, 0, 0 // allow versions like "14" or "231"
-                        | [| major; minor |] -> int major, int minor, 0
-                        | [| major; minor; patch |] -> int major, int minor, int patch
-                        | _ -> failwithf $"Cannot parse year-based version \"{wave}\"."
-                    let wave =
-                        match major with
-                        | _ when major < 100 -> Legacy(major, minor)
-                        | _ when major < 1000 -> YearBasedVersion(major, minor)
-                        | _ -> YearBased(major, minor)
-                    wave, patch
+                    let major, minor =
+                        match waveComponents |> Array.truncate 2 with
+                        | [| major |] when int major < 1000 -> int major, 0 // allow versions like "14" or "231"
+                        | [| major; minor |] -> int major, int minor
+                        | _ -> failwithf $"Cannot parse year-based version \"{waveString}\"."
+                    match major with
+                    | _ when major < 100 -> Legacy(major, minor)
+                    | _ when major < 1000 -> YearBasedVersion major
+                    | _ -> YearBased(major, minor)
 
             let flavor =
                 match IdeFlavor.Parse flavor, isSnapshot with
@@ -64,7 +80,7 @@ type IdeVersion = // TODO[#6]: Verify ordering
                 | flavor, _ -> flavor
             {
                 Wave = wave
-                Patch = patch
+                FullVersion = FullVersion.Parse waveString
                 Flavor = flavor
                 IsSnapshot = isSnapshot
             }
@@ -78,18 +94,9 @@ type IdeVersion = // TODO[#6]: Verify ordering
 
     override this.ToString() =
         String.concat "" [|
-            let components =
-                match this.Wave with
-                // NOTE: Legacy waves might not round-trip, e.g. "14" will be converted into "14.0". We don't care.
-                | Legacy(major, minor) -> [| string major; string minor |]
-                | YearBasedVersion(major, version) when version = 0 -> [| string major|]
-                | YearBasedVersion(major, version) -> [| string major; string version |]
-                | YearBased(year, number) -> [| string year; string number |]
-                | Latest -> [| "LATEST" |]
-            components |> String.concat "."
-            if this.Patch <> 0 then
-                "."
-                string this.Patch
+            match this.Wave with
+            | Latest -> "LATEST"
+            | _ -> this.FullVersion.ToString()
 
             match this.Flavor with
             | Snapshot -> ""
