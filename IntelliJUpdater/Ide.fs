@@ -22,9 +22,12 @@ let private SnapshotMetadataUrl ideKey =
 let private ReleaseMetadataUrl ideKey =
     Uri $"https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/{ideKey}/maven-metadata.xml"
 
-let private GetUri ideKey = function
-    | Release -> ReleaseMetadataUrl ideKey
-    | Nightly | UpdateFlavor.EAP -> SnapshotMetadataUrl ideKey
+let private GetUris ideKey flavor =
+    let releaseOnly = [| ReleaseMetadataUrl ideKey |]
+    let releaseAndSnapshot = [| SnapshotMetadataUrl ideKey; ReleaseMetadataUrl ideKey |]
+    match flavor with
+    | Release -> releaseOnly
+    | Nightly | UpdateFlavor.EAP -> releaseAndSnapshot
 
 let private CreateFlavorFilter = function
     | Release -> fun version ->
@@ -100,8 +103,9 @@ let ReadLatestVersion (kind: IdeKind)
                       (flavor: UpdateFlavor)
                       (constr: IdeVersionConstraint option): Task<IdeVersion> = task {
     let key = GetIdeKey kind
-    let uri = GetUri key flavor
-    let! allVersions = ReadVersions uri
+    let uris = GetUris key flavor
+    let! allVersionBatches = uris |> Seq.map ReadVersions |> Task.WhenAll
+    let allVersions = allVersionBatches |> Array.concat
     if allVersions.Length = 0 then failwithf $"No SDK versions found for {kind}."
     return SelectLatestVersion flavor constr allVersions
 }

@@ -51,3 +51,8 @@ let ``IntelliJ toString``(): unit =
     Assert.Equal("LATEST-EAP-SNAPSHOT", latest.ToString())
     Assert.Equal("231-EAP-SNAPSHOT", rollingEap.ToString())
     Assert.Equal("231.9423-EAP-CANDIDATE-SNAPSHOT", eap.ToString())
+
+[<Fact>]
+let ``Version comparison``(): unit =
+    Assert.True(IdeVersion.Parse "2024.2" > IdeVersion.Parse "2024.2-RC1-SNAPSHOT")
+    Assert.True(IdeVersion.Parse "2024.2-RC1-SNAPSHOT" > IdeVersion.Parse "2024.1")
