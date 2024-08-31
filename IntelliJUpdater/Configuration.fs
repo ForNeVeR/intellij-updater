@@ -22,6 +22,7 @@ and [<CLIMutable>] JsonUpdate = {
     Kind: string
     VersionFlavor: string
     VersionConstraint: string option
+    Order: string option
     Augmentation: string option
 }
 
@@ -37,6 +38,7 @@ type Configuration =
         Kind = UpdateKind.Parse update.Kind
         VersionFlavor = UpdateFlavor.Parse update.VersionFlavor
         VersionConstraint = update.VersionConstraint |> Option.map IdeVersionConstraint.Parse
+        Order = update.Order |> IdeVersionOrder.Parse
         Augmentation = update.Augmentation |> Option.map Augmentation.Parse
     }
 
@@ -63,6 +65,7 @@ and Update = {
     Kind: UpdateKind
     VersionFlavor: UpdateFlavor
     VersionConstraint: IdeVersionConstraint option
+    Order: IdeVersionOrder
     Augmentation: Augmentation option
 }
 and UpdateKind =
@@ -110,6 +113,18 @@ and IdeVersionConstraint =
             LessOrEqualTo(IdeVersion.Parse (x.Substring 2))
         else
             failwithf $"""Cannot parse VersionConstraint: "{x}"."""
+and IdeVersionOrder =
+    | Oldest
+    | Newest
+
+    static member Parse(x: string option): IdeVersionOrder =
+        match x with
+        | None -> Newest
+        | Some x ->
+            match x.ToLowerInvariant() with
+            | "oldest" -> Oldest
+            | "newest" -> Newest
+            | o -> failwithf $"""Cannot parse order value "{o}"."""
 and Augmentation =
     | NextMajor
 

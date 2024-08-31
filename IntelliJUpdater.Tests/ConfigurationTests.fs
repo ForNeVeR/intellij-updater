@@ -42,6 +42,7 @@ let ``Config is read correctly``(): Task =
                 Kind = Ide IdeKind.Rider
                 VersionFlavor = Release
                 VersionConstraint = Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4"))
+                Order = Newest
                 Augmentation = None
             }
             {
@@ -50,6 +51,7 @@ let ``Config is read correctly``(): Task =
                 Kind = Ide IdeKind.Rider
                 VersionFlavor = Release
                 VersionConstraint = Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4"))
+                Order = Newest
                 Augmentation = Some NextMajor
             }
         |]
@@ -84,6 +86,7 @@ let ``Latest wave constraint is read``(): Task =
                 Kind = Ide IdeKind.Rider
                 VersionFlavor = Release
                 VersionConstraint = Some LatestWave
+                Order = Oldest
                 Augmentation = None
             }
         |]

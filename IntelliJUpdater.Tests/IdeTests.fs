@@ -13,7 +13,7 @@ open Xunit
 
 [<Fact>]
 let ``Rider version is read``(): Task = task {
-    let! version = Ide.ReadLatestVersion IdeKind.Rider Release (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4")))
+    let! version = Ide.ReadLatestVersion IdeKind.Rider Release (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4"))) Newest
     let expected = {
         Wave = YearBased(2024, 1)
         FullVersion = FullVersion.Parse "2024.1.4"
@@ -25,7 +25,12 @@ let ``Rider version is read``(): Task = task {
 
 [<Fact>]
 let ``IntelliJ IDEA Community version is read``(): Task = task {
-    let! version = Ide.ReadLatestVersion IdeKind.IntelliJIdeaCommunity Release (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4")))
+    let! version =
+        Ide.ReadLatestVersion
+            IdeKind.IntelliJIdeaCommunity
+            Release
+            (Some (LessOrEqualTo (IdeVersion.Parse "2024.1.4")))
+            Newest
     let expected = {
         Wave = YearBased(2024, 1)
         FullVersion = FullVersion.Parse "2024.1.4"
@@ -79,8 +84,8 @@ let ``IntelliJ versions are properly selected``(): unit =
         rollingEap
         eap
     |]
-    let latestNightly = Ide.SelectLatestVersion UpdateFlavor.Nightly None versions
-    let latestEap = Ide.SelectLatestVersion UpdateFlavor.EAP None versions
+    let latestNightly = Ide.SelectVersion UpdateFlavor.Nightly None versions Newest
+    let latestEap = Ide.SelectVersion UpdateFlavor.EAP None versions Newest
     Assert.Equal(latest, latestNightly)
     Assert.Equal(eap, latestEap)
 
@@ -92,8 +97,7 @@ let ``Flavor constraint gets applied before latest wave constraint``(): unit =
         IdeVersion.Parse "2024.2-EAP1-SNAPSHOT"
         IdeVersion.Parse "2024.2-EAP2-SNAPSHOT"
     |]
-    let latestEap = Ide.SelectLatestVersion UpdateFlavor.EAP (Some LatestWave) versions
-    let latestRelease = Ide.SelectLatestVersion UpdateFlavor.Release (Some LatestWave) versions
+    let latestEap = Ide.SelectVersion UpdateFlavor.EAP (Some LatestWave) versions Newest
+    let latestRelease = Ide.SelectVersion UpdateFlavor.Release (Some LatestWave) versions Newest
     Assert.Equal(IdeVersion.Parse "2024.2-EAP2-SNAPSHOT", latestEap)
     Assert.Equal(IdeVersion.Parse "2024.1.4", latestRelease)
-

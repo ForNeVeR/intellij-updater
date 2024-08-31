@@ -94,9 +94,10 @@ let private ReadVersions(url: Uri) = task {
     return versions
 }
 
-let SelectLatestVersion (flavor: UpdateFlavor)
-                        (constr: IdeVersionConstraint option)
-                        (versions: IdeVersion[]): IdeVersion =
+let SelectVersion (flavor: UpdateFlavor)
+                  (constr: IdeVersionConstraint option)
+                  (versions: IdeVersion[])
+                  (order: IdeVersionOrder): IdeVersion =
     let fFilter = CreateFlavorFilter flavor
 
     let flavorFilteredVersions =
@@ -104,18 +105,23 @@ let SelectLatestVersion (flavor: UpdateFlavor)
         |> Seq.filter fFilter
         |> ResizeArray
     let cFilter = CreateConstraintFilter flavorFilteredVersions constr
+    let ordering =
+        match order with
+        | Oldest -> Seq.min
+        | Newest -> Seq.max
 
     flavorFilteredVersions
     |> Seq.filter cFilter
-    |> Seq.max
+    |> ordering
 
 let ReadLatestVersion (kind: IdeKind)
                       (flavor: UpdateFlavor)
-                      (constr: IdeVersionConstraint option): Task<IdeVersion> = task {
+                      (constr: IdeVersionConstraint option)
+                      (order: IdeVersionOrder): Task<IdeVersion> = task {
     let key = GetIdeKey kind
     let uris = GetUris key flavor
     let! allVersionBatches = uris |> Seq.map ReadVersions |> Task.WhenAll
     let allVersions = allVersionBatches |> Array.concat
     if allVersions.Length = 0 then failwithf $"No SDK versions found for {kind}."
-    return SelectLatestVersion flavor constr allVersions
+    return SelectVersion flavor constr allVersions order
 }

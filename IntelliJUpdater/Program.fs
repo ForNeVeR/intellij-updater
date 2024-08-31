@@ -36,11 +36,16 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
     match update.Kind with
     | Ide ide ->
         task {
-            let! ideVersion = Ide.ReadLatestVersion ide update.VersionFlavor update.VersionConstraint
+            let! ideVersion = Ide.ReadLatestVersion ide update.VersionFlavor update.VersionConstraint update.Order
             return EntityVersion.Ide ideVersion
         }
     | Kotlin -> task {
-        let! ideVersion = Ide.ReadLatestVersion IdeKind.IntelliJIdeaCommunity update.VersionFlavor update.VersionConstraint
+        let! ideVersion =
+            Ide.ReadLatestVersion
+                IdeKind.IntelliJIdeaCommunity
+                update.VersionFlavor
+                update.VersionConstraint
+                update.Order
         let kotlinVersion = Kotlin.ForIde ideVersion.Wave
         return EntityVersion.Kotlin kotlinVersion
     }
