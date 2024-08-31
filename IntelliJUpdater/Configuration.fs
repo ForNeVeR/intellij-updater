@@ -101,9 +101,12 @@ and UpdateFlavor =
         | o -> failwithf $"""Cannot parse versionFlavor value "{o}"."""
 and IdeVersionConstraint =
     | LessOrEqualTo of IdeVersion
+    | LatestWave
 
     static member Parse(x: string): IdeVersionConstraint =
-        if x.StartsWith "<=" then
+        if x = "latestWave" then
+            LatestWave
+        elif x.StartsWith "<=" then
             LessOrEqualTo(IdeVersion.Parse (x.Substring 2))
         else
             failwithf $"""Cannot parse VersionConstraint: "{x}"."""

@@ -83,3 +83,17 @@ let ``IntelliJ versions are properly selected``(): unit =
     let latestEap = Ide.SelectLatestVersion UpdateFlavor.EAP None versions
     Assert.Equal(latest, latestNightly)
     Assert.Equal(eap, latestEap)
+
+[<Fact>]
+let ``Flavor constraint gets applied before latest wave constraint``(): unit =
+    let versions = [|
+        IdeVersion.Parse "2024.1.4"
+        IdeVersion.Parse "2024.1.3"
+        IdeVersion.Parse "2024.2-EAP1-SNAPSHOT"
+        IdeVersion.Parse "2024.2-EAP2-SNAPSHOT"
+    |]
+    let latestEap = Ide.SelectLatestVersion UpdateFlavor.EAP (Some LatestWave) versions
+    let latestRelease = Ide.SelectLatestVersion UpdateFlavor.Release (Some LatestWave) versions
+    Assert.Equal(IdeVersion.Parse "2024.2-EAP2-SNAPSHOT", latestEap)
+    Assert.Equal(IdeVersion.Parse "2024.1.4", latestRelease)
+

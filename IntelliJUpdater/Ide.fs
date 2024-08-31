@@ -35,8 +35,8 @@ let private CreateFlavorFilter = function
         | Snapshot -> false
         | RollingEAP -> false
         | RollingEAPCandidate -> false
-        | EAP _ -> true
-        | RC _ -> true
+        | EAP _ -> false
+        | RC _ -> false
         | Stable -> true
     | UpdateFlavor.EAP -> fun version ->
         match version.Flavor with
@@ -54,9 +54,15 @@ let private CreateFlavorFilter = function
         | Stable -> true
     | Nightly -> fun _ -> true
 
-let private CreateConstraintFilter = function
+let private CreateConstraintFilter allVersions = function
     | None -> fun _ -> true
     | Some (LessOrEqualTo other) -> fun version -> version <= other
+    | Some LatestWave ->
+        let lastWave =
+            allVersions
+            |> Seq.map _.Wave
+            |> Seq.max
+        fun v -> v.Wave = lastWave
 
 let ReadVersionsFromStream(stream: Stream): Task<IdeVersion []> = task {
     use reader = new StreamReader(stream)
@@ -92,10 +98,14 @@ let SelectLatestVersion (flavor: UpdateFlavor)
                         (constr: IdeVersionConstraint option)
                         (versions: IdeVersion[]): IdeVersion =
     let fFilter = CreateFlavorFilter flavor
-    let cFilter = CreateConstraintFilter constr
 
-    versions
-    |> Seq.filter fFilter
+    let flavorFilteredVersions =
+        versions
+        |> Seq.filter fFilter
+        |> ResizeArray
+    let cFilter = CreateConstraintFilter flavorFilteredVersions constr
+
+    flavorFilteredVersions
     |> Seq.filter cFilter
     |> Seq.max
 

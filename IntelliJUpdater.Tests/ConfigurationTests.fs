@@ -59,3 +59,37 @@ let ``Config is read correctly``(): Task =
         let! config = Configuration.Read(LocalPath "testData", stream)
         Assert.Equal(expectedConfig, config)
     }
+
+[<Fact>]
+let ``Latest wave constraint is read``(): Task =
+    let content = """
+{
+    "updates": [{
+        "file": "testData/config.toml",
+        "field": "riderSdkVersion",
+        "kind": "rider",
+        "versionFlavor": "release",
+        "versionConstraint": "latestWave",
+        "order": "oldest"
+    }],
+    "prBodyPrefix": "test"
+}
+"""
+    let expectedConfig = {
+        PrBodyPrefix = Some "test"
+        Updates = [|
+            {
+                File = LocalPath "testData/config.toml"
+                Field = "riderSdkVersion"
+                Kind = Ide IdeKind.Rider
+                VersionFlavor = Release
+                VersionConstraint = Some LatestWave
+                Augmentation = None
+            }
+        |]
+    }
+    task {
+        use stream = new MemoryStream(Encoding.UTF8.GetBytes(content))
+        let! config = Configuration.Read(LocalPath "testData", stream)
+        Assert.Equal(expectedConfig, config)
+    }
