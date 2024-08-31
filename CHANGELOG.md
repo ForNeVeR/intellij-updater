@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-08-31
+### Added
+- New `versionConstraint`: `latestWave`.
+- New field in the update descriptor: `order`.
+
 ## [1.0.4] - 2024-08-23
 ### Fixed
 - [#26](https://github.com/ForNeVeR/intellij-updater/issues/26): less stable releases like EAP now are able to update to more stable ones.
@@ -39,4 +44,5 @@ This is the initial release of the action. It supports updating of versions for 
 [1.0.2]: https://github.com/ForNeVeR/intellij-updater/compare/v1.0.1...v1.0.2
 [1.0.3]: https://github.com/ForNeVeR/intellij-updater/compare/v1.0.2...v1.0.3
 [1.0.4]: https://github.com/ForNeVeR/intellij-updater/compare/v1.0.3...v1.0.4
-[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.0.4...HEAD
+[1.1.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.0.4...v1.1.0
+[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.1.0...HEAD

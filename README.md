@@ -24,7 +24,9 @@ Add a following file, `intellij-updater.json`, to your repository:
         "file": "gradle/libs.versions.toml",
         "field": "riderSdk",
         "kind": "rider",
-        "versionFlavor": "release"
+        "versionFlavor": "release",
+        "versionConstraint": "latestWave",
+        "order": "oldest"
     }, {
         "file": "gradle/libs.versions.toml",
         "field": "riderSdkPreview",
@@ -86,8 +88,8 @@ jobs:
 
 This will perform the following operation every day:
 1. Check the latest versions of Rider available in the JetBrains Maven repository.
-2. Update the `riderSdk` to the latest stable Rider version and `riderSdkPreview` to the latest EAP Rider version in the `config.toml` file.
-3. Update the `untilBuildVersion` to the _next major Rider wave_ in the `gradle.properties` file (e.g. if the current in 2024.1 aka 241, then it will be updated to `242.*`, for your plugin to be auto-compatible with the next version).
+2. Update the `riderSdk` to the oldest stable Rider version from the latest wave (e.g., if 2024.1, 2024.2.0 and 2024.2.1 are available, it will pick 2024.2.0) and `riderSdkPreview` to the latest EAP Rider version in the `config.toml` file.
+3. Update the `untilBuildVersion` to the _next major Rider wave_ in the `gradle.properties` file (e.g. if the current in 2024.2 aka 242, then it will be updated to `243.*`, for your plugin to be auto-compatible with the next version).
 4. Create a PR with the changes (if started manually or by schedule; otherwise, a "dry run" is performed, where the action checks the validity of the current configuration).
 
 > [!NOTE]
@@ -105,7 +107,8 @@ The configuration file spec:
             "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
             "kind": "kotlin | intellij-idea-community | rider",
             "versionFlavor": "release | eap | nightly",
-            "versionConstraint": "<=SomeValidVersion (only one kind of constraint is supported for now)",
+            "versionConstraint": "<=SomeValidVersion | latestWave",
+            "order": "oldest | newest (optional)",
             "augmentation": "optional field, might contain 'nextMajor'"
         }
     ],
@@ -121,6 +124,17 @@ A more detailed description of the `versionFlavor` field:
 - `eap` takes the latest _numbered_ EAP version, meaning it won't take `231-EAP-SNAPSHOT` from IntelliJ (because these are not numbered).
 
 The point of this is to have a tested PR each time a new EAP IDE version is released, to avoid silent snapshot updates breaking compilation and tests.
+
+`versionConstraint` is eiter `<=SomeValidVersion` (e.g. `<=2024.1.3`) or `latestWave`. The first one will update the field to the latest version that is less or equal to the specified one. The second one will filter the values to only contain the latest wave (e.g. `2024.2` or `242`), automatically switcting to the new one if it is available.
+
+`order` (`newest` by default) allows to choose either the newest or the oldest version from the list.
+
+The order in which the filters are work: say, we have a list of versions on the JetBrains CDN. Then,
+1. The `versionFlavor` filter is applied.
+2. If `versionConstraint` is `latestWave`, then it is created based on the filtered version list, to choose the latest wave among the flavor-filtered ones.
+3. The `versionConstraint` is applied.
+4. A version is chosen from the filtered list based on the `order`.
+5. If `augmentation` is present, it is applied to the chosen version.
 
 ### Parameters
 Action's output parameters are documented in [the action file itself][action-yml], check the `outputs` section.
