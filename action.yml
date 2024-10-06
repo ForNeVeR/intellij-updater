@@ -12,6 +12,23 @@ inputs:
     description: 'Configuration file'
     required: true
     default: './intellij-updater.json'
+  send-pr:
+    description: 'Whether the action should send a pull request as the result of its execution, if it determines that changes are required. Otherwise, you can use ay other mean to send a PR if you wish.'
+    required: false
+    default: 'false'
+  pr-token:
+    description: 'Token to send the PR. Will only be used if `send-pr` is `true`.'
+    required: false
+  git-user-name:
+    description: '`user.name` parameter for the Git commit in the PR. Will only be used if `send-pr` is `true`.'
+    required: false
+  git-user-emal:
+    description: '`user.email` parameter for the Git commit in the PR. Will only be used if `send-pr` is `true`.'
+    required: false
+  test-only:
+    description: 'Perform internal tests. Is not meant for public use.'
+    required: true
+    default: 'false'
 outputs:
   has-changes:
     description: 'Whether the IntelliJ updater has something to update.'
@@ -54,3 +71,23 @@ runs:
       env:
         ACTION_PATH: ${{ github.action_path }}
         CONFIG_FILE: ${{ inputs.config-file }}
+
+    - if: inputs.send-pr == 'true' && steps.update.outputs.has-changes == 'true'
+      name: 'Create a PR'
+      shell: pwsh
+      run: |
+        ./scripts/New-PR.ps1 ${{ inputs.test-only == 'true' && '-TestMode' || '' }} `
+          -BranchName $env:BRANCH_NAME `
+          -CommitMessage $env:COMMIT_MESSAGE `
+          -PrTitle $env:PR_TITLE `
+          -PrBodyPath $env:PR_BODY_PATH `
+          -GitUserName $env:GIT_USER_NAME `
+          -GitUserEmail $env:GIT_USER_EMAIL
+      env:
+        GITHUB_TOKEN: ${{ inputs.pr-token }}
+        GIT_USER_NAME: ${{ inputs.git-user-name }}
+        GIT_USER_EMAIL: ${{ inputs.git-user-email }}
+        BRANCH_NAME: ${{ steps.update.outputs.branch-name }}
+        COMMIT_MESSAGE: ${{ steps.update.outputs.commit-message }}
+        PR_TITLE: ${{ steps.update.outputs.pr-title }}
+        PR_BODY_PATH: ${{ steps.update.outputs.pr-body-path }}
