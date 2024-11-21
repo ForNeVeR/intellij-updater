@@ -154,7 +154,7 @@ License
 The project is distributed under the terms of [the MIT license][docs.license]
 (unless a particular file states otherwise).
 
-The license indication in the project's sources is compliant with the [REUSE specification v3.2][reuse.spec].
+The license indication in the project's sources is compliant with the [REUSE specification v3.3][reuse.spec].
 
 [action-yml]: action.yml
 [andivionian-status-classifier]: https://andivionian.fornever.me/v1/#status-aquana-
@@ -166,5 +166,5 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
 [intellij.kotlin]: https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
-[reuse.spec]: https://reuse.software/spec-3.2/
+[reuse.spec]: https://reuse.software/spec-3.3/
 [status-aquana]: https://img.shields.io/badge/status-aquana-yellowgreen.svg
