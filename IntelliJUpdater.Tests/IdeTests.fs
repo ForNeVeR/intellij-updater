@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -101,3 +101,9 @@ let ``Flavor constraint gets applied before latest wave constraint``(): unit =
     let latestRelease = Ide.SelectVersion UpdateFlavor.Release (Some LatestWave) versions Newest
     Assert.Equal(IdeVersion.Parse "2024.2-EAP2-SNAPSHOT", latestEap)
     Assert.Equal(IdeVersion.Parse "2024.1.4", latestRelease)
+
+[<Fact>]
+let ``Only year-based versions are read from the releases repository``(): unit =
+    let _, filter = Ide.ReleaseMetadata("idea/ideaIC")
+    Assert.True <| filter(IdeWave.YearBased(2024, 2))
+    Assert.False <| filter(IdeWave.YearBasedVersion(243))

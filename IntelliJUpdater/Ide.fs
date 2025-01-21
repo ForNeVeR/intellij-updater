@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -17,14 +17,16 @@ let private GetIdeKey = function
     | IdeKind.Rider -> "rider/riderRD"
     | IdeKind.IntelliJIdeaCommunity -> "idea/ideaIC"
 
-let private SnapshotMetadataUrl ideKey =
-    Uri $"https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/{ideKey}/maven-metadata.xml"
-let private ReleaseMetadataUrl ideKey =
-    Uri $"https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/{ideKey}/maven-metadata.xml"
+let internal SnapshotMetadata(ideKey: string): Uri * (IdeWave -> bool) =
+    Uri $"https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/{ideKey}/maven-metadata.xml",
+    fun _ -> true
+let internal ReleaseMetadata(ideKey: string): Uri * (IdeWave -> bool) =
+    Uri $"https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/{ideKey}/maven-metadata.xml",
+    function | YearBased _ -> true | _ -> false
 
 let private GetUris ideKey flavor =
-    let releaseOnly = [| ReleaseMetadataUrl ideKey |]
-    let releaseAndSnapshot = [| SnapshotMetadataUrl ideKey; ReleaseMetadataUrl ideKey |]
+    let releaseOnly = [| ReleaseMetadata ideKey |]
+    let releaseAndSnapshot = [| SnapshotMetadata ideKey; ReleaseMetadata ideKey |]
     match flavor with
     | Release -> releaseOnly
     | Nightly | UpdateFlavor.EAP -> releaseAndSnapshot
@@ -80,7 +82,7 @@ let ReadVersionsFromStream(stream: Stream): Task<IdeVersion []> = task {
     return versions
 }
 
-let private ReadVersions(url: Uri) = task {
+let private ReadVersions(url: Uri, waveFilter) = task {
     printfn $"Loading document \"{url}\"."
     let sw = Stopwatch.StartNew()
 
@@ -91,7 +93,7 @@ let private ReadVersions(url: Uri) = task {
     let! content = response.Content.ReadAsStreamAsync()
     let! versions = ReadVersionsFromStream content
     printfn $"Loaded and processed the document in {sw.ElapsedMilliseconds} ms."
-    return versions
+    return versions |> Array.filter(fun x -> waveFilter x.Wave)
 }
 
 let SelectVersion (flavor: UpdateFlavor)

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -26,10 +26,11 @@ let ``Number-based wave parser``(version: string, major: int, minor: int, patch:
     Assert.Equal(expected, ideVersion.Wave)
     Assert.Equal(FullVersion.Parse version, ideVersion.FullVersion)
 
-let ``Year-based wave parser``(): unit =
+[<Fact>]
+let ``Year-based wave parser works``(): unit =
     let expected = {
         Wave = YearBased(2024, 2)
-        FullVersion = FullVersion(Some 2024, Some 2, Some 0, Some 1)
+        FullVersion = FullVersion(Some 242, Some 0, Some 1, true)
         Flavor = Stable
         IsSnapshot = false
     }
@@ -51,8 +52,15 @@ let ``IntelliJ toString``(): unit =
     Assert.Equal("LATEST-EAP-SNAPSHOT", latest.ToString())
     Assert.Equal("231-EAP-SNAPSHOT", rollingEap.ToString())
     Assert.Equal("231.9423-EAP-CANDIDATE-SNAPSHOT", eap.ToString())
+    Assert.Equal("2024.2.0.1", (IdeVersion.Parse "2024.2.0.1").ToString())
 
 [<Fact>]
 let ``Version comparison``(): unit =
     Assert.True(IdeVersion.Parse "2024.2" > IdeVersion.Parse "2024.2-RC1-SNAPSHOT")
     Assert.True(IdeVersion.Parse "2024.2-RC1-SNAPSHOT" > IdeVersion.Parse "2024.1")
+
+[<Fact>]
+let ``Sort order for year-based and number-based versions is correct``(): unit =
+    Assert.True(IdeVersion.Parse "2024.2" > IdeVersion.Parse "241.1234")
+    Assert.True(IdeVersion.Parse "243.1234" > IdeVersion.Parse "2024.2")
+    Assert.True(IdeVersion.Parse "243.1234" > IdeVersion.Parse "2024.3")

@@ -1,15 +1,19 @@
-// SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
 open System
 open System.Collections.Generic
 open System.IO
+open System.Runtime.CompilerServices
 open System.Text.RegularExpressions
 open System.Threading.Tasks
 open IntelliJUpdater
 open IntelliJUpdater.Versioning
 open TruePath
+
+[<assembly: InternalsVisibleTo("IntelliJUpdater.Tests")>]
+()
 
 type TaskResult =
     | HasChanges of {|
