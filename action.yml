@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+# SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 #
 # SPDX-License-Identifier: MIT
 
@@ -35,7 +35,7 @@ runs:
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
 
     - name: 'Dump environment'
       shell: pwsh
