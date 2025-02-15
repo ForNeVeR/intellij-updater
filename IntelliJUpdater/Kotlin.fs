@@ -10,6 +10,7 @@ open IntelliJUpdater.Versioning
 // https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 let ForIde (wave: IdeWave): Version =
     match wave with
+    | YearBased(2025, 1) -> Version.Parse "2.1.10"
     | YearBased(2024, 3) -> Version.Parse "2.0.21"
     | YearBased(2024, 2) -> Version.Parse "1.9.24"
     | YearBased(2024, 1) -> Version.Parse "1.9.22"
