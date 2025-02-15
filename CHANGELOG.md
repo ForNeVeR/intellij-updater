@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-02-15
+### Added
+- Allow to detect Kotlin versions from IDE versions like `251`, not only `2025.1`.
+
 ## [1.4.0] - 2025-02-15
 ### Changed
 - Update Kotlin for IntelliJ 2025.1 to 2.1.10.
@@ -72,4 +76,5 @@ This is the initial release of the action. It supports updating of versions for 
 [1.2.1]: https://github.com/ForNeVeR/intellij-updater/compare/v1.2.0...v1.2.1
 [1.3.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.2.1...v1.3.0
 [1.4.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.3.0...v1.4.0
-[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.4.0...v1.5.0
+[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.5.0...HEAD

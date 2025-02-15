@@ -66,19 +66,8 @@ type IdeWave =
             | Legacy _, _ -> -1
             | _, Legacy _ -> 1
             | _, _ ->
-                let normalizeYearBased = function
-                    | YearBasedVersion major -> major
-                    | YearBased(year, number) as x ->
-                        let yearCode = year - 2000
-                        if yearCode < 0 || yearCode > 99
-                        then failwithf $"Invalid year in YearBased version: {x}."
-                        if number < 0 || number > 9
-                        then failwithf $"Invalid number in YearBased version: {x}."
-                        yearCode * 10 + number
-                    | x -> failwithf $"Impossible version pattern passed: {x}."
-
-                let a = normalizeYearBased this
-                let b = normalizeYearBased other
+                let a = this.NormalizedYearMajorNumber
+                let b = other.NormalizedYearMajorNumber
                 compare a b
 
     override this.Equals(other: obj) =
@@ -98,6 +87,18 @@ type IdeWave =
         | YearBasedVersion major -> hash major
         | YearBased(year, number) -> hash(year, number)
         | Latest -> 1
+
+    member this.NormalizedYearMajorNumber: int =
+        match this with
+        | YearBasedVersion major -> major
+        | YearBased(year, number) as x ->
+            let yearCode = year - 2000
+            if yearCode < 0 || yearCode > 99
+            then failwithf $"Invalid year in YearBased version: {x}."
+            if number < 0 || number > 9
+            then failwithf $"Invalid number in YearBased version: {x}."
+            yearCode * 10 + number
+        | x -> failwithf $"Impossible version pattern passed: {x}."
 
 type IdeFlavor =
     | Snapshot
