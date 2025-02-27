@@ -14,10 +14,12 @@ SPDX-License-Identifier: MIT
     <ItemGroup>
         <Compile Include="Versioning.fs" />
         <Compile Include="Configuration.fs" />
+        <Compile Include="Maven.fs" />
         <Compile Include="Ide.fs" />
         <Compile Include="ConfigFile.fs" />
         <Compile Include="Kotlin.fs" />
         <Compile Include="Augmentations.fs" />
+        <Compile Include="RdGen.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

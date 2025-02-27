@@ -43,16 +43,28 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
             let! ideVersion = Ide.ReadLatestVersion ide update.VersionFlavor update.VersionConstraint update.Order
             return EntityVersion.Ide ideVersion
         }
-    | Kotlin -> task {
-        let! ideVersion =
-            Ide.ReadLatestVersion
-                IdeKind.IntelliJIdeaCommunity
-                update.VersionFlavor
-                update.VersionConstraint
-                update.Order
-        let kotlinVersion = Kotlin.ForIde ideVersion.Wave
-        return EntityVersion.Kotlin kotlinVersion
-    }
+    | Kotlin ->
+        task {
+            let! ideVersion =
+                Ide.ReadLatestVersion
+                    IdeKind.IntelliJIdeaCommunity
+                    update.VersionFlavor
+                    update.VersionConstraint
+                    update.Order
+            let kotlinVersion = Kotlin.ForIde ideVersion.Wave
+            return EntityVersion.Kotlin kotlinVersion
+        }
+    | RdGen ->
+        task {
+            let! ideVersion =
+                Ide.ReadLatestVersion
+                    IdeKind.Rider
+                    update.VersionFlavor
+                    update.VersionConstraint
+                    update.Order
+            let! rdGenVersion = RdGen.ForIde ideVersion.Wave
+            return EntityVersion.RdGen rdGenVersion
+        }
 
 let ReadLatestSpecs(config: Configuration): Task<StoredEntityVersion[]> = task {
     let results = ResizeArray()
@@ -119,6 +131,7 @@ let private ApplyVersion (update: StoredEntityVersion): Task<bool> =
         match update.Update with
         | EntityVersion.Ide version -> version.ToString()
         | EntityVersion.Kotlin version -> version.ToString()
+        | EntityVersion.RdGen version -> version.ToString()
         | EntityVersion.NextMajor waveNumber -> $"{waveNumber}.*"
 
     match update.File.GetExtensionWithoutDot() with
@@ -148,6 +161,7 @@ let GenerateResult (config: Configuration) (localSpec: StoredEntityVersion[]) (r
         match item.Update with
         | EntityVersion.Ide version -> version.ToString()
         | EntityVersion.Kotlin version -> version.ToString()
+        | EntityVersion.RdGen version -> version.ToString()
         | EntityVersion.NextMajor waveNumber -> $"{waveNumber}.*"
 
     let message = String.concat "\n" [|

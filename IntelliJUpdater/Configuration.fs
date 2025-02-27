@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -71,10 +71,12 @@ and Update = {
 and UpdateKind =
     | Ide of IdeKind
     | Kotlin
+    | RdGen
 
     static member Parse(x: string): UpdateKind =
         match x.ToLowerInvariant() with
         | "kotlin" -> Kotlin
+        | "rd-gen" -> RdGen
         | other -> Ide(IdeKind.Parse other)
 and [<RequireQualifiedAccess>] IdeKind =
     | Rider

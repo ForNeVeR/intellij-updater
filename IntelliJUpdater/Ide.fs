@@ -9,8 +9,6 @@ open System.Diagnostics
 open System.IO
 open System.Net.Http
 open System.Threading.Tasks
-open System.Xml.Linq
-open System.Xml.XPath
 open IntelliJUpdater.Versioning
 
 let private GetIdeKey = function
@@ -69,14 +67,9 @@ let private CreateConstraintFilter allVersions = function
 let ReadVersionsFromStream(stream: Stream): Task<IdeVersion []> = task {
     use reader = new StreamReader(stream)
     let! content = reader.ReadToEndAsync()
-    let document = XDocument.Parse content
     let versions =
-        document.XPathSelectElements "//metadata//versioning//versions//version"
-        |> Seq.map(fun version ->
-            let version = version.Value
-            printfn $"Version found: {version}"
-            version
-        )
+        content
+        |> Maven.ReadVersionsFromMetadata
         |> Seq.map IdeVersion.Parse
         |> Seq.toArray
     return versions

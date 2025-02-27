@@ -66,8 +66,8 @@ type IdeWave =
             | Legacy _, _ -> -1
             | _, Legacy _ -> 1
             | _, _ ->
-                let a = this.NormalizedYearMajorNumber
-                let b = other.NormalizedYearMajorNumber
+                let a = this.NormalizedMajorNumber
+                let b = other.NormalizedMajorNumber
                 compare a b
 
     override this.Equals(other: obj) =
@@ -88,7 +88,7 @@ type IdeWave =
         | YearBased(year, number) -> hash(year, number)
         | Latest -> 1
 
-    member this.NormalizedYearMajorNumber: int =
+    member this.NormalizedMajorNumber: int =
         match this with
         | YearBasedVersion major -> major
         | YearBased(year, number) as x ->
@@ -186,4 +186,5 @@ type IdeVersion =
 type EntityVersion =
     | Ide of IdeVersion
     | Kotlin of Version
+    | RdGen of Version
     | NextMajor of waveNumber: int

@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 
 SPDX-License-Identifier: MIT
 -->
@@ -105,7 +105,7 @@ The configuration file spec:
         {
             "file": "File path relative to this config file's parent directory. Accepts .toml or Java .properties files.",
             "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
-            "kind": "kotlin | intellij-idea-community | rider",
+            "kind": "kotlin | rd-gen | intellij-idea-community | rider",
             "versionFlavor": "release | eap | nightly",
             "versionConstraint": "<=SomeValidVersion | latestWave",
             "order": "oldest | newest (optional)",
@@ -117,6 +117,7 @@ The configuration file spec:
 ```
 
 A `kind` of `kotlin` will update the corresponding field to the correct Kotlin version used by a particular IDE version, see [this table][intellij.kotlin] for details.
+A `kind` of `rd-gen` will update to the corresponding version of [rd-gen][rd].
 
 A more detailed description of the `versionFlavor` field:
 - `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);
@@ -166,5 +167,6 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
 [intellij.kotlin]: https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
+[rd]: https://github.com/JetBrains/rd/
 [reuse.spec]: https://reuse.software/spec-3.3/
 [status-aquana]: https://img.shields.io/badge/status-aquana-yellowgreen.svg
