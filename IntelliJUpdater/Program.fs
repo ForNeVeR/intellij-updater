@@ -105,6 +105,12 @@ let private ReadVersion(update: Update): Task<StoredEntityVersion> = task {
                 let version = Version.Parse text
                 return EntityVersion.Kotlin version
             }
+        | RdGen, None ->
+            task {
+                let! text = ReadValue update.File update.Field
+                let version = Version.Parse text
+                return EntityVersion.RdGen version
+            }
         | x, y -> failwithf $"Unsupported update kind and augmentation: {x} with {y}."
 
     return {
