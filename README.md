@@ -107,7 +107,7 @@ The configuration file spec:
             "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
             "kind": "kotlin | rd-gen | intellij-idea-community | rider",
             "versionFlavor": "release | eap | nightly",
-            "versionConstraint": "<=SomeValidVersion | latestWave",
+            "versionConstraint": "<=SomeValidVersion | latestWave (optional)",
             "order": "oldest | newest (optional)",
             "augmentation": "optional field, might contain 'nextMajor'"
         }
