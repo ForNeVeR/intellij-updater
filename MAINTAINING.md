@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024 Friedrich von Never <friedrich@fornever.me>
+SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
 
 SPDX-License-Identifier: MIT
 -->
@@ -19,10 +19,6 @@ To release a new version:
 6. Make sure there's a properly formed version entry in the `CHANGELOG.md` file.
 7. Merge the changes via a pull request.
 8. Push a tag named `v<VERSION>` to GitHub.
-9. Create a new [release][releases] on GitHub.
-   - Release title should be "intellij-updater v<VERSION>".
-   - Release notes could be copy-pasted from the `CHANGELOG.md` file (omitting the release title line).
-10. Make sure to also update the current rolling major release tag (say, `v1`) to the new version.
+9. GitHub Actions will do the rest.
 
 [semver]: https://semver.org/spec/v2.0.0.html
-[releases]: https://github.com/ForNeVeR/intellij-updater/releases

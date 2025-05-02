@@ -26,6 +26,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{AAD2F83F-36C4-4549-ABDB-800375C0D96D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\main.yml = .github\workflows\main.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test-data", "test-data", "{A37DEF7E-4D5E-4C7F-9FBD-955EAE0CD130}"
@@ -43,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{F819
 		scripts\Test-Encoding.ps1 = scripts\Test-Encoding.ps1
 		scripts\New-TestResultFile.ps1 = scripts\New-TestResultFile.ps1
 		scripts\Assert-TestResult.ps1 = scripts\Assert-TestResult.ps1
+		scripts\Update-RollingRelease.ps1 = scripts\Update-RollingRelease.ps1
 	EndProjectSection
 EndProject
 Global

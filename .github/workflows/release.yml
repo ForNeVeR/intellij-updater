@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2025 Friedrich von Never <friedrich@fornever.me>
+#
+# SPDX-License-Identifier: MIT
+
+name: Release
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday
+
+jobs:
+  release:
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Read version from Git ref
+        id: version
+        shell: pwsh
+        run: echo "version=$(if ($env:GITHUB_REF.StartsWith('refs/tags/v')) { $env:GITHUB_REF -replace '^refs/tags/v', '' } else { 'next' })" >> $env:GITHUB_OUTPUT
+
+      - name: "Check out the sources"
+        uses: actions/checkout@v4
+
+      - name: Read the changelog
+        uses: ForNeVeR/ChangelogAutomation.action@v2
+        with:
+          input: ./CHANGELOG.md
+          output: ./changelog-section.md
+
+      - name: Upload the changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog-section.md
+          path: ./changelog-section.md
+
+      - name: Push a rolling release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: scripts/Update-RollingRelease.ps1 -Version $env:VERSION
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Create a release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: intellij-updater v${{ steps.version.outputs.version }}
+          body_path: ./changelog-section.md
