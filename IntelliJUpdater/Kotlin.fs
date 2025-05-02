@@ -18,4 +18,7 @@ let ForIde (wave: IdeWave): Version =
     | 233 -> Version.Parse "1.9.21"
     | 232 -> Version.Parse "1.8.20"
     | 231 -> Version.Parse "1.8.0"
+    | 223 -> Version.Parse "1.7.22"
+    | 222 -> Version.Parse "1.6.21"
+    | 221 -> Version.Parse "1.6.10"
     | _ -> failwithf $"Cannot determine Kotlin version for IDE wave {wave}."
