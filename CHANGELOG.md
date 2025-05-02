@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-05-03
+### Added
+- Information on Kotlin versions used by IntelliJ Platform 252 and 221–223.
+
+### Changed
+- Update the dependencies used.
+
 ## [1.6.1] - 2025-03-04
 ### Fixed
 - rd-gen version wasn't correctly read from the stored versioning configuration.
@@ -87,4 +94,5 @@ This is the initial release of the action. It supports updating of versions for 
 [1.5.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.4.0...v1.5.0
 [1.6.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.5.0...v1.6.0
 [1.6.1]: https://github.com/ForNeVeR/intellij-updater/compare/v1.6.0...v1.6.1
-[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.6.1...HEAD
+[1.7.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.6.1...v1.7.0
+[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.7.0...HEAD
