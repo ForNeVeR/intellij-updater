@@ -24,7 +24,7 @@ SPDX-License-Identifier: MIT
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="TruePath" Version="1.7.0" />
+      <PackageReference Include="TruePath" Version="1.8.0" />
     </ItemGroup>
 
 </Project>
