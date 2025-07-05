@@ -107,3 +107,13 @@ let ``Only year-based versions are read from the releases repository``(): unit =
     let _, filter = Ide.ReleaseMetadata("idea/ideaIC")
     Assert.True <| filter(IdeWave.YearBased(2024, 2))
     Assert.False <| filter(IdeWave.YearBasedVersion(243))
+
+[<Fact>]
+let ``EAP flavor filters out EAP-CANDIDATE builds``(): unit =
+    let actualEap = IdeVersion.Parse "252.23591.19-EAP-SNAPSHOT"
+    let versions = [|
+        actualEap
+        IdeVersion.Parse "252.23892-EAP-CANDIDATE-SNAPSHOT"
+    |]
+    let latestVersion = Ide.SelectVersion UpdateFlavor.EAP None versions Newest
+    Assert.Equal(actualEap, latestVersion)

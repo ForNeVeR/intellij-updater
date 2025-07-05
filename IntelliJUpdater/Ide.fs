@@ -40,8 +40,8 @@ let private CreateFlavorFilter = function
         | Stable -> true
     | UpdateFlavor.EAP -> fun version ->
         match version.Flavor with
-        | Snapshot -> false
-        | RollingEAPCandidate | RollingEAP ->
+        | Snapshot | RollingEAPCandidate -> false
+        | RollingEAP ->
             // For rolling EAP, the rules are interesting:
             // - consider releases 231.1111-EAP as "EAP" ones
             // - consider releases 231-EAP as "not EAP" ones, i.e. only snapshots
