@@ -35,12 +35,13 @@ let private CreateFlavorFilter = function
         | Snapshot -> false
         | RollingEAP -> false
         | RollingEAPCandidate -> false
+        | EAPCandidate -> false
         | EAP _ -> false
         | RC _ -> false
         | Stable -> true
     | UpdateFlavor.EAP -> fun version ->
         match version.Flavor with
-        | Snapshot | RollingEAPCandidate -> false
+        | Snapshot | RollingEAPCandidate | EAPCandidate -> false
         | RollingEAP ->
             // For rolling EAP, the rules are interesting:
             // - consider releases 231.1111-EAP as "EAP" ones

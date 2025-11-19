@@ -104,13 +104,14 @@ type IdeFlavor =
     | Snapshot
     | RollingEAP
     | RollingEAPCandidate
+    | EAPCandidate
     | EAP of int * dev: bool
     | RC of int
     | Stable
 
     static member Parse(x: string) =
         if x = "EAP" then RollingEAP
-        else if x = "EAP-CANDIDATE" then RollingEAPCandidate
+        else if x = "EAP-CANDIDATE" then EAPCandidate
         else if x.StartsWith "EAP" && x.EndsWith "D" then EAP(int(x.Substring(3, x.Length - 4)), true)
         else if x.StartsWith "EAP" then EAP(int(x.Substring 3), false)
         else if x.StartsWith "RC" then RC(int(x.Substring 2))
@@ -148,6 +149,7 @@ type IdeVersion =
             let flavor =
                 match IdeFlavor.Parse flavor, isSnapshot with
                 | Stable, true -> Snapshot
+                | EAPCandidate, true -> RollingEAPCandidate
                 | flavor, _ -> flavor
             {
                 Wave = wave
@@ -159,6 +161,7 @@ type IdeVersion =
         match components with
         | [| wave |] -> parseComponents wave "" false
         | [| wave; "SNAPSHOT" |] -> parseComponents wave "" true
+        | [| wave; "EAP"; "CANDIDATE" |] -> parseComponents wave "EAP-CANDIDATE" false
         | [| wave; flavor; "CANDIDATE"; "SNAPSHOT" |] -> parseComponents wave (flavor + "-CANDIDATE") true
         | [| wave; flavor; "SNAPSHOT" |] -> parseComponents wave flavor true
         | _ -> failwithf $"Cannot parse IDE version \"{description}\"."
@@ -172,7 +175,7 @@ type IdeVersion =
             match this.Flavor with
             | Snapshot -> ""
             | RollingEAP -> "-EAP"
-            | RollingEAPCandidate -> "-EAP-CANDIDATE"
+            | EAPCandidate | RollingEAPCandidate -> "-EAP-CANDIDATE"
             | EAP(n, dev) ->
                 let d = if dev then "D" else ""
                 $"-EAP{string n}{d}"
