@@ -34,8 +34,6 @@ runs:
   steps:
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: '9.0.x'
 
     - name: 'Dump environment'
       shell: pwsh
