@@ -105,15 +105,16 @@ type IdeFlavor =
     | RollingEAP
     | RollingEAPCandidate
     | EAPCandidate
-    | EAP of int * dev: bool
+    | EAP
+    | NumberedEAP of int * dev: bool
     | RC of int
     | Stable
 
     static member Parse(x: string) =
-        if x = "EAP" then RollingEAP
+        if x = "EAP" then EAP
         else if x = "EAP-CANDIDATE" then EAPCandidate
-        else if x.StartsWith "EAP" && x.EndsWith "D" then EAP(int(x.Substring(3, x.Length - 4)), true)
-        else if x.StartsWith "EAP" then EAP(int(x.Substring 3), false)
+        else if x.StartsWith "EAP" && x.EndsWith "D" then NumberedEAP(int(x.Substring(3, x.Length - 4)), true)
+        else if x.StartsWith "EAP" then NumberedEAP(int(x.Substring 3), false)
         else if x.StartsWith "RC" then RC(int(x.Substring 2))
         else if x = "" then Stable
         else failwithf $"Cannot parse IDE flavor: {x}."
@@ -150,6 +151,7 @@ type IdeVersion =
                 match IdeFlavor.Parse flavor, isSnapshot with
                 | Stable, true -> Snapshot
                 | EAPCandidate, true -> RollingEAPCandidate
+                | EAP, true -> RollingEAP
                 | flavor, _ -> flavor
             {
                 Wave = wave
@@ -161,6 +163,7 @@ type IdeVersion =
         match components with
         | [| wave |] -> parseComponents wave "" false
         | [| wave; "SNAPSHOT" |] -> parseComponents wave "" true
+        | [| wave; "EAP" |] -> parseComponents wave "EAP" false
         | [| wave; "EAP"; "CANDIDATE" |] -> parseComponents wave "EAP-CANDIDATE" false
         | [| wave; flavor; "CANDIDATE"; "SNAPSHOT" |] -> parseComponents wave (flavor + "-CANDIDATE") true
         | [| wave; flavor; "SNAPSHOT" |] -> parseComponents wave flavor true
@@ -174,9 +177,9 @@ type IdeVersion =
 
             match this.Flavor with
             | Snapshot -> ""
-            | RollingEAP -> "-EAP"
+            | EAP | RollingEAP -> "-EAP"
             | EAPCandidate | RollingEAPCandidate -> "-EAP-CANDIDATE"
-            | EAP(n, dev) ->
+            | NumberedEAP(n, dev) ->
                 let d = if dev then "D" else ""
                 $"-EAP{string n}{d}"
             | RC n -> $"-RC{n}"

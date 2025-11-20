@@ -18,9 +18,9 @@ let ``Legacy wave parser``(version: string, major: int, minor: int): unit =
     Assert.Equal(FullVersion.Parse version, ideVersion.FullVersion)
 
 [<Theory>]
-[<InlineData("139.1.20", 139, 1, 20)>]
-[<InlineData("241.18034.55", 241, 18034, 55)>]
-let ``Number-based wave parser``(version: string, major: int, minor: int, patch: int): unit =
+[<InlineData("139.1.20", 139)>]
+[<InlineData("241.18034.55", 241)>]
+let ``Number-based wave parser``(version: string, major: int): unit =
     let ideVersion = IdeVersion.Parse version
     let expected = YearBasedVersion major
     Assert.Equal(expected, ideVersion.Wave)
@@ -33,6 +33,17 @@ let ``Three-numbered EAP-CANDIDATE``(): unit =
         Wave = YearBasedVersion 251
         FullVersion = FullVersion(Some 251, Some 29188, Some 11, false)
         Flavor = IdeFlavor.EAPCandidate
+        IsSnapshot = false
+    }
+    Assert.Equal(expected, ideVersion)
+
+[<Fact>]
+let ``Three-numbered EAP``(): unit =
+    let ideVersion = IdeVersion.Parse "252.27397.28-EAP"
+    let expected = {
+        Wave = YearBasedVersion 252
+        FullVersion = FullVersion(Some 252, Some 27397, Some 28, false)
+        Flavor = IdeFlavor.EAP
         IsSnapshot = false
     }
     Assert.Equal(expected, ideVersion)

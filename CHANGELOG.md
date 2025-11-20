@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] (2025-11-20)
+### Fixed
+- Parse version `252.27397.28-EAP`.
+
 ## [1.9.1] - 2025-11-19
 ### Fixed
 - Parse version `251.29188.11-EAP-CANDIDATE`.
