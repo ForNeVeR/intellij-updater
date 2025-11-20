@@ -34,23 +34,24 @@ let private CreateFlavorFilter = function
         match version.Flavor with
         | Snapshot -> false
         | RollingEAP -> false
+        | EAP -> false
         | RollingEAPCandidate -> false
         | EAPCandidate -> false
-        | EAP _ -> false
+        | NumberedEAP _ -> false
         | RC _ -> false
         | Stable -> true
     | UpdateFlavor.EAP -> fun version ->
         match version.Flavor with
         | Snapshot | RollingEAPCandidate | EAPCandidate -> false
-        | RollingEAP ->
+        | EAP | RollingEAP ->
             // For rolling EAP, the rules are interesting:
             // - consider releases 231.1111-EAP as "EAP" ones
             // - consider releases 231-EAP as "not EAP" ones, i.e. only snapshots
-            // This allows to handle such updates practically, i.e. generate actual pull requests on new EAP update.
+            // This allows handling such updates practically, i.e. generate actual pull requests on new EAP update.
             match version.Wave, version.FullVersion with
             | YearBasedVersion _, FullVersion(_, Some minor, _, _) -> minor > 0
             | _ -> false
-        | EAP _ -> true
+        | NumberedEAP _ -> true
         | RC _ -> true
         | Stable -> true
     | Nightly -> fun _ -> true
