@@ -13,10 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 ### Added
-- Support for IntelliJ IDEA Unified distribution via `"intellij-idea"` kind (#112)
-  - New configuration option for the unified IntelliJ IDEA distribution
-  - Uses Maven repository path `idea/idea`
-  - Backward compatible with existing `intellij-idea-community` configuration
+- [#112](https://github.com/ForNeVeR/intellij-updater/issues/112): Support IntelliJ IDEA Unified aka `"intellij-idea"`.
 
 ## [1.10.0] - 2025-11-20
 ### Changed
