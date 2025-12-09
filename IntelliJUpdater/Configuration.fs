@@ -81,10 +81,12 @@ and UpdateKind =
 and [<RequireQualifiedAccess>] IdeKind =
     | Rider
     | IntelliJIdeaCommunity
+    | IntelliJIdea
 
     static let mapping = Map.ofArray [|
         "rider", Rider
         "intellij-idea-community", IntelliJIdeaCommunity
+        "intellij-idea", IntelliJIdea
     |]
 
     static member Parse(x: string) =

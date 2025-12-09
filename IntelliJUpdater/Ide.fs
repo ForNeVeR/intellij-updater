@@ -14,6 +14,7 @@ open IntelliJUpdater.Versioning
 let private GetIdeKey = function
     | IdeKind.Rider -> "rider/riderRD"
     | IdeKind.IntelliJIdeaCommunity -> "idea/ideaIC"
+    | IdeKind.IntelliJIdea -> "idea/idea"
 
 let internal SnapshotMetadata(ideKey: string): Uri * (IdeWave -> bool) =
     Uri $"https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/{ideKey}/maven-metadata.xml",

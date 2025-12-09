@@ -96,3 +96,35 @@ let ``Latest wave constraint is read``(): Task =
         let! config = Configuration.Read(LocalPath "testData", stream)
         Assert.Equal(expectedConfig, config)
     }
+
+[<Fact>]
+let ``IntelliJ IDEA Unified config is parsed``(): Task =
+    let content = """
+{
+    "updates": [{
+        "file": "testData/config.toml",
+        "field": "intellijVersion",
+        "kind": "intellij-idea",
+        "versionFlavor": "release"
+    }]
+}
+"""
+    let expectedConfig = {
+        PrBodyPrefix = None
+        Updates = [|
+            {
+                File = LocalPath "testData/config.toml"
+                Field = "intellijVersion"
+                Kind = Ide IdeKind.IntelliJIdea
+                VersionFlavor = Release
+                VersionConstraint = None
+                Order = Newest
+                Augmentation = None
+            }
+        |]
+    }
+    task {
+        use stream = new MemoryStream(Encoding.UTF8.GetBytes(content))
+        let! config = Configuration.Read(LocalPath "testData", stream)
+        Assert.Equal(expectedConfig, config)
+    }

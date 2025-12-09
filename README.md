@@ -33,6 +33,12 @@ Add a following file, `intellij-updater.json`, to your repository:
         "kind": "rider",
         "versionFlavor": "eap"
     }, {
+        "file": "gradle/libs.versions.toml",
+        "field": "intellijVersion",
+        "kind": "intellij-idea",
+        "versionFlavor": "release",
+        "versionConstraint": "latestWave"
+    }, {
         "file": "gradle.properties",
         "field": "untilBuildVersion",
         "kind": "rider",
@@ -105,7 +111,7 @@ The configuration file spec:
         {
             "file": "File path relative to this config file's parent directory. Accepts .toml or Java .properties files.",
             "field": "Field in the configuration file. Only field name, no sections or structure. Action includes an extremely simple parser for supported file formats and doesn't support any kind of disambiguation in case there are several identically-named properties.",
-            "kind": "kotlin | rd-gen | intellij-idea-community | rider",
+            "kind": "kotlin | rd-gen | intellij-idea-community | intellij-idea | rider",
             "versionFlavor": "release | eap | nightly",
             "versionConstraint": "<=SomeValidVersion | latestWave (optional)",
             "order": "oldest | newest (optional)",
@@ -118,6 +124,8 @@ The configuration file spec:
 
 A `kind` of `kotlin` will update the corresponding field to the correct Kotlin version used by a particular IDE version, see [this table][intellij.kotlin] for details.
 A `kind` of `rd-gen` will update to the corresponding version of [rd-gen][rd].
+
+The `intellij-idea-community` kind targets the Community Edition (artifact: `ideaIC`), while `intellij-idea` targets the new Unified distribution (artifact: `idea`). Use `intellij-idea` for the unified IntelliJ IDEA distribution introduced in 2025.x releases.
 
 A more detailed description of the `versionFlavor` field:
 - `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);

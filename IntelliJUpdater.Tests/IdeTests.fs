@@ -41,6 +41,23 @@ let ``IntelliJ IDEA Community version is read``(): Task = task {
 }
 
 [<Fact>]
+let ``IntelliJ IDEA Unified version is read``(): Task = task {
+    let! version =
+        Ide.ReadLatestVersion
+            IdeKind.IntelliJIdea
+            Release
+            (Some (LessOrEqualTo (IdeVersion.Parse "2025.3")))
+            Newest
+    let expected = {
+        Wave = YearBased(2025, 3)
+        FullVersion = FullVersion.Parse "2025.3"
+        Flavor = Stable
+        IsSnapshot = false
+    }
+    Assert.Equal(expected, version)
+}
+
+[<Fact>]
 let ``IntelliJ versions are supported``(): Task = task {
     let xml = """<metadata>
     <groupId>com.jetbrains.intellij.idea</groupId>
