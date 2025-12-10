@@ -125,7 +125,7 @@ The configuration file spec:
 A `kind` of `kotlin` will update the corresponding field to the correct Kotlin version used by a particular IDE version, see [this table][intellij.kotlin] for details.
 A `kind` of `rd-gen` will update to the corresponding version of [rd-gen][rd].
 
-The `intellij-idea-community` kind targets the Community Edition (artifact: `ideaIC`), while `intellij-idea` targets the new Unified distribution (artifact: `idea`). Use `intellij-idea` for the unified IntelliJ IDEA distribution introduced in 2025.x releases.
+The `intellij-idea-community` kind targets the Community Edition (artifact: `ideaIC`), while `intellij-idea` targets the new Unified distribution (artifact: `idea`). Use `intellij-idea` for the unified IntelliJ IDEA distribution introduced in 2025.3 release.
 
 A more detailed description of the `versionFlavor` field:
 - `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);

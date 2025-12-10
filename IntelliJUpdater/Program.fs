@@ -45,12 +45,14 @@ let private ReadLatestSpec(update: Update): Task<EntityVersion> =
         }
     | Kotlin ->
         task {
+            #nowarn "44" // IntelliJIdeaCommunity is appropriate for Kotlin version lookups (wave-based, not distribution-specific)
             let! ideVersion =
                 Ide.ReadLatestVersion
                     IdeKind.IntelliJIdeaCommunity
                     update.VersionFlavor
                     update.VersionConstraint
                     update.Order
+            #warnon "44"
             let kotlinVersion = Kotlin.ForIde ideVersion.Wave
             return EntityVersion.Kotlin kotlinVersion
         }

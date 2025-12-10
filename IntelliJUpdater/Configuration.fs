@@ -80,14 +80,18 @@ and UpdateKind =
         | other -> Ide(IdeKind.Parse other)
 and [<RequireQualifiedAccess>] IdeKind =
     | Rider
-    | IntelliJIdeaCommunity
+    /// IntelliJ IDEA Community Edition (artifact: ideaIC). Obsolete: use IntelliJIdea for 2025.3+ versions.
+    | [<System.Obsolete("Use IntelliJIdea for IntelliJ IDEA 2025.3 and later versions")>] IntelliJIdeaCommunity
+    /// IntelliJ IDEA Unified distribution (artifact: idea). Introduced in 2025.3 release.
     | IntelliJIdea
 
+    #nowarn "44" // Disable obsolete warnings for backward compatibility mapping
     static let mapping = Map.ofArray [|
         "rider", Rider
         "intellij-idea-community", IntelliJIdeaCommunity
         "intellij-idea", IntelliJIdea
     |]
+    #warnon "44"
 
     static member Parse(x: string) =
         match Map.tryFind (x.ToLowerInvariant()) mapping with

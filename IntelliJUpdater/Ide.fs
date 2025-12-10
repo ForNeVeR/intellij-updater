@@ -11,10 +11,12 @@ open System.Net.Http
 open System.Threading.Tasks
 open IntelliJUpdater.Versioning
 
+#nowarn "44" // Disable obsolete warnings for backward compatibility support
 let private GetIdeKey = function
     | IdeKind.Rider -> "rider/riderRD"
     | IdeKind.IntelliJIdeaCommunity -> "idea/ideaIC"
     | IdeKind.IntelliJIdea -> "idea/idea"
+#warnon "44"
 
 let internal SnapshotMetadata(ideKey: string): Uri * (IdeWave -> bool) =
     Uri $"https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/{ideKey}/maven-metadata.xml",
