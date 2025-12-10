@@ -125,7 +125,7 @@ The configuration file spec:
 A `kind` of `kotlin` will update the corresponding field to the correct Kotlin version used by a particular IDE version, see [this table][intellij.kotlin] for details.
 A `kind` of `rd-gen` will update to the corresponding version of [rd-gen][rd].
 
-The `intellij-idea-community` kind targets the Community Edition (artifact: `ideaIC`), while `intellij-idea` targets the new Unified distribution (artifact: `idea`). Use `intellij-idea` for the unified IntelliJ IDEA distribution introduced in 2025.3 release.
+The `intellij-idea-community` kind targets the Community Edition (artifact: `ideaIC`, no longer available since 2025.3), while `intellij-idea` targets [the Unified distribution][idea-unified] (artifact: `idea`) introduced in 2025.3 release.
 
 A more detailed description of the `versionFlavor` field:
 - `release` takes the latest _stable_ IDE version released (no EAP, no preview, no snapshot);
@@ -173,6 +173,7 @@ The license indication in the project's sources is compliant with the [REUSE spe
 [docs.license]: LICENSE.md
 [docs.maintaining]: MAINTAINING.md
 [example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
+[idea-unified]: https://blog.jetbrains.com/idea/2025/12/intellij-idea-unified-release/
 [intellij.kotlin]: https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
 [rd]: https://github.com/JetBrains/rd/

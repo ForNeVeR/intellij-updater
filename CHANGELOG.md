@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 ### Added
-- [#112](https://github.com/ForNeVeR/intellij-updater/issues/112): Support IntelliJ IDEA Unified aka `"intellij-idea"`.
+- [#112](https://github.com/ForNeVeR/intellij-updater/issues/112): Support [IntelliJ IDEA Unified](https://blog.jetbrains.com/idea/2025/12/intellij-idea-unified-release/) aka `"intellij-idea"`.
 
 ## [1.10.0] - 2025-11-20
 ### Changed
