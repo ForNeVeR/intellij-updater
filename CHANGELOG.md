@@ -11,9 +11,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.11.0] - 2025-12-10
 ### Added
 - [#112](https://github.com/ForNeVeR/intellij-updater/issues/112): Support [IntelliJ IDEA Unified](https://blog.jetbrains.com/idea/2025/12/intellij-idea-unified-release/) aka `"intellij-idea"`.
+
+### Changed
+- Update the dependencies.
 
 ## [1.10.0] - 2025-11-20
 ### Changed
@@ -128,4 +131,5 @@ This is the initial release of the action. It supports updating of versions for 
 [1.9.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.8.0...v1.9.0
 [1.9.1]: https://github.com/ForNeVeR/intellij-updater/compare/v1.9.0...v1.9.1
 [1.10.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.9.1...v1.10.0
-[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.10.0...HEAD
+[1.11.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.10.0...v1.11.0
+[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.11.0...HEAD
