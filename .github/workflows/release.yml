@@ -37,7 +37,7 @@ jobs:
           output: ./changelog-section.md
 
       - name: Upload the changelog
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: changelog-section.md
           path: ./changelog-section.md
