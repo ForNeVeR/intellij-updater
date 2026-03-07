@@ -1,12 +1,12 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
+SPDX-FileCopyrightText: 2024-2026 Friedrich von Never <friedrich@fornever.me>
 
 SPDX-License-Identifier: MIT
 -->
 
 <Project>
     <PropertyGroup Label="Packaging">
-        <Version>1.11.0</Version>
+        <Version>1.12.0</Version>
     </PropertyGroup>
 
     <PropertyGroup Label="Build">

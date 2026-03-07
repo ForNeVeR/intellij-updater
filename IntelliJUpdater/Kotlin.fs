@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2026 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -10,6 +10,7 @@ open IntelliJUpdater.Versioning
 // https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 let ForIde (wave: IdeWave): Version =
     match wave.NormalizedMajorNumber with
+    | 261 -> Version.Parse "2.3.20-RC2" // tentative, see https://github.com/JetBrains/intellij-community/blob/261/.idea/libraries/kotlin_stdlib.xml#L3
     | 253 -> Version.Parse "2.2.20"
     | 252 -> Version.Parse "2.1.20"
     | 251 -> Version.Parse "2.1.10"
