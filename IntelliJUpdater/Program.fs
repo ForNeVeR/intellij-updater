@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
+// SPDX-FileCopyrightText: 2024-2026 Friedrich von Never <friedrich@fornever.me>
 //
 // SPDX-License-Identifier: MIT
 
@@ -26,7 +26,7 @@ type TaskResult =
 
 type IdeBuildSpec = {
     IdeVersions: Map<string, IdeVersion>
-    KotlinVersion: Version
+    KotlinVersion: Semver.SemVersion
     UntilVersion: string
 }
 
@@ -104,7 +104,7 @@ let private ReadVersion(update: Update): Task<StoredEntityVersion> = task {
         | Kotlin, None ->
             task {
                 let! text = ReadValue update.File update.Field
-                let version = Version.Parse text
+                let version = Semver.SemVersion.Parse(text, Semver.SemVersionStyles.Any)
                 return EntityVersion.Kotlin version
             }
         | RdGen, None ->

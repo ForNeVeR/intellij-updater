@@ -191,6 +191,6 @@ type IdeVersion =
 [<RequireQualifiedAccess>]
 type EntityVersion =
     | Ide of IdeVersion
-    | Kotlin of Version
+    | Kotlin of Semver.SemVersion
     | RdGen of Version
     | NextMajor of waveNumber: int

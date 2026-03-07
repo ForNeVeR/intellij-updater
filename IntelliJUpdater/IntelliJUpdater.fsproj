@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Friedrich von Never <friedrich@fornever.me>
+SPDX-FileCopyrightText: 2024-2026 Friedrich von Never <friedrich@fornever.me>
 
 SPDX-License-Identifier: MIT
 -->
@@ -24,6 +24,7 @@ SPDX-License-Identifier: MIT
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Semver" Version="3.0.0" />
       <PackageReference Include="TruePath" Version="1.11.0" />
     </ItemGroup>
 
