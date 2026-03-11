@@ -18,6 +18,7 @@ let Augment (augmentation: Augmentation option) (entityVersion: EntityVersion): 
         let year, number =
             match version.Wave with
             | YearBased(year, number) -> year, number
+            | YearBasedVersion major -> 2000 + major / 10, major % 10
             | _ -> failwithf $"Unsupported IDE version wave: {version.Wave}."
         let nextYear, nextNumber = NextVersion year number
         let wave = nextYear % 100 * 10 + nextNumber
