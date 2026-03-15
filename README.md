@@ -101,6 +101,28 @@ This will perform the following operation every day:
 > [!NOTE]
 > The `prBodyPrefix` value in this example is added to the pull request title. In this example, we are adding a note for the maintainer to bootstrap the CI manually, because this is one of the current recommendations from the [create-pull-request][] action. This is not inherently required by this action: follow the recommendation of the PR-creating action of your choice.
 
+#### GitHub Application
+If you want to avoid the restrictions mentioned above (the need for manual closing and opening each PR), you can set up a GitHub application and give it access to your repository. Follow the instruction (based on [the instruction in create-pull-request][create-pull-request.app]).
+
+1. [Create a GitHub App][github.app].
+2. Select the following permissions with **Read & Write**:
+   - **Repository permissions: Contents**,
+   - **Repository permissions: Pull requests**.
+3. Create a private key for the application, download it.
+4. Install the application on the required repository (by visiting page `https://github.com/apps/<app-name>/` and clicking **Configure**).
+5. Add `IJ_UPDATER_APP_ID` and `IJ_UPDATER_PRIVATE_KEY` to the GitHub Actions secrets of your repository, paste the app id and private key from the app settings.
+6. Use the `create-github-app-token` action:
+
+   ```yml
+   steps:
+     - uses: actions/create-github-app-token@v3
+       id: generate-token
+       with:
+         app-id: ${{ secrets.IJ_UPDATER_APP_ID }}
+         private-key: ${{ secrets.IJ_UPDATER_PRIVATE_KEY }}
+   ```
+7. Use the token `${{ steps.generate-token.outputs.token }}` as the GitHub token in your workflow.
+
 ### Configuration
 The action itself accepts only one optional parameter: `config-file`. If not passed, it will default to `./intellij-updater.json`.
 
@@ -167,12 +189,14 @@ The license indication in the project's sources is compliant with the [REUSE spe
 
 [action-yml]: action.yml
 [andivionian-status-classifier]: https://andivionian.fornever.me/v1/#status-aquana-
+[create-pull-request.app]: https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens
 [create-pull-request]: https://github.com/peter-evans/create-pull-request
 [docs.changelog]: CHANGELOG.md
 [docs.contributing]: CONTRIBUTING.md
 [docs.license]: LICENSE.md
 [docs.maintaining]: MAINTAINING.md
 [example.avalonia-rider]: https://github.com/ForNeVeR/AvaloniaRider/blob/HEAD/.github/workflows/dependencies.yml
+[github.app]: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app
 [idea-unified]: https://blog.jetbrains.com/idea/2025/12/intellij-idea-unified-release/
 [intellij.kotlin]: https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
 [issues]: https://github.com/ForNeVeR/intellij-updater/issues
