@@ -15,4 +15,4 @@ let private parse (s: string) = SemVersion.Parse(s, SemVersionStyles.Any)
 let ``Kotlin version determiner``(): unit =
     Assert.Equal(parse "2.1.10", Kotlin.ForIde <| YearBased(2025, 1))
     Assert.Equal(parse "2.1.10", Kotlin.ForIde <| YearBasedVersion 251)
-    Assert.Equal(parse "2.3.20-RC2", Kotlin.ForIde <| YearBasedVersion 261)
+    Assert.Equal(parse "2.3.20", Kotlin.ForIde <| YearBasedVersion 261)
