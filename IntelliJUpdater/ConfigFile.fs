@@ -14,7 +14,7 @@ open TruePath
 module TomlFile =
     let ReadValue (tomlFile: LocalPath) (key: string): Task<string> = task {
         let! toml = File.ReadAllTextAsync tomlFile.Value
-        let re = Regex $@"[\r\n]{Regex.Escape key} = ""(.*?)"""
+        let re = Regex $@"[\r\n]{Regex.Escape key}\s*=\s*""(.*?)"""
         let matches = re.Match(toml)
         if not matches.Success then failwithf $"Cannot find the key \"{key}\" in the TOML file \"{tomlFile}\"."
         return matches.Groups[1].Value
