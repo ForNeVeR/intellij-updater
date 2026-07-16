@@ -33,7 +33,7 @@ runs:
   using: 'composite'
   steps:
     - name: Set up .NET SDK
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
 
     - name: 'Dump environment'
       shell: pwsh
