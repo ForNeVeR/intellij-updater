@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [ macos-26, ubuntu-24.04, windows-2025 ]
+        image: [ macos-26, ubuntu-26.04, windows-2025 ]
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [ macos-26, ubuntu-24.04, windows-2025 ]
+        image: [ macos-26, ubuntu-26.04, windows-2025 ]
 
     steps:
       - uses: actions/checkout@v7
@@ -78,7 +78,7 @@ jobs:
             -AdditionalFiles @('test-data/config.toml', 'test-data/config.properties')
 
   licenses:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - name: Check out the sources
       uses: actions/checkout@v7
@@ -86,7 +86,7 @@ jobs:
       uses: fsfe/reuse-action@v6
 
   encoding:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - name: Verify encoding
