@@ -13,7 +13,8 @@ let private parse (s: string) = SemVersion.Parse(s, SemVersionStyles.Any)
 // Preview: https://github.com/JetBrains/intellij-community/blob/master/.idea/libraries/kotlin_stdlib.xml
 let ForIde (wave: IdeWave): SemVersion =
     match wave.NormalizedMajorNumber with
-    | 263 -> parse "2.4.10-RC2" // preliminary
+    | 271 -> parse "2.5.0-Beta2" // preliminary
+    | 263 -> parse "2.4.21-RC"
     | 262 -> parse "2.4.0"
     | 261 -> parse "2.3.20"
     | 253 -> parse "2.2.20"
