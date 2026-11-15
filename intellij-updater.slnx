@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/main.yml" />
+    <File Path=".github/workflows/release.yml" />
+  </Folder>
+  <Folder Name="/scripts/">
+    <File Path="scripts/Assert-TestResult.ps1" />
+    <File Path="scripts/New-TestResultFile.ps1" />
+    <File Path="scripts/Test-Encoding.ps1" />
+    <File Path="scripts/Update-RollingRelease.ps1" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="action.yml" />
+    <File Path="CHANGELOG.md" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="global.json.license" />
+    <File Path="intellij-updater.slnx.license" />
+    <File Path="LICENSE.md" />
+    <File Path="MAINTAINING.md" />
+    <File Path="README.md" />
+    <File Path="renovate.json" />
+    <File Path="renovate.json.license" />
+  </Folder>
+  <Folder Name="/test-data/">
+    <File Path="test-data/config.properties" />
+    <File Path="test-data/config.toml" />
+    <File Path="test-data/test-config.json" />
+    <File Path="test-data/test-config.json.license" />
+    <File Path="test-data/test-data.gold" />
+    <File Path="test-data/test-data.gold.license" />
+  </Folder>
+  <Project Path="IntelliJUpdater.Tests/IntelliJUpdater.Tests.fsproj" />
+  <Project Path="IntelliJUpdater/IntelliJUpdater.fsproj" />
+</Solution>
