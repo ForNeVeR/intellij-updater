@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2026-11-17
+### Fixed
+- The action now uses its own .NET SDK version instead of the one pinned by the `global.json` file in the caller's repository. This fixes the `NETSDK1045` error in repositories pinning .NET SDK older than 11.
+
 ## [1.16.0] - 2026-11-15
 ### Changed
 - Update Kotlin for 2026.3 and 2027.1.
@@ -179,4 +183,5 @@ This is the initial release of the action. It supports updating of versions for 
 [1.14.1]: https://github.com/ForNeVeR/intellij-updater/compare/v1.14.0...v1.14.1
 [1.15.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.14.1...v1.15.0
 [1.16.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.15.0...v1.16.0
-[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.16.0...HEAD
+[1.17.0]: https://github.com/ForNeVeR/intellij-updater/compare/v1.16.0...v1.17.0
+[Unreleased]: https://github.com/ForNeVeR/intellij-updater/compare/v1.17.0...HEAD
